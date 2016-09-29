@@ -15,7 +15,6 @@ use Symfony\Bridge\Doctrine\RegistryInterface;
 
 /**
  * @author Vincent Chalamon <vincent@les-tilleuls.coop>
- * todo Make it final (conflict with unit tests)
  */
 class TransformerEvent
 {

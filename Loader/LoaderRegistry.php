@@ -15,7 +15,6 @@ use CoopTilleuls\MigrationBundle\Exception\LoaderNotFoundException;
 
 /**
  * @author Vincent Chalamon <vincent@les-tilleuls.coop>
- * todo Make it final (conflict with unit tests)
  */
 class LoaderRegistry
 {

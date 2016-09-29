@@ -2,6 +2,11 @@ language: php
 
 sudo: false
 
+checks:
+    php:
+        code_rating: true
+        duplication: true
+
 cache:
     directories:
         - $HOME/.composer/cache

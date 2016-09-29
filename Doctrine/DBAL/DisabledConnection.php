@@ -15,7 +15,6 @@ use Doctrine\DBAL\Connection;
 
 /**
  * @author Vincent Chalamon <vincent@les-tilleuls.coop>
- * todo Make it final (conflict with unit tests)
  */
 class DisabledConnection extends Connection
 {
