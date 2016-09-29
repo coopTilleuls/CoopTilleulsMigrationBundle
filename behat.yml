@@ -1,0 +1,16 @@
+default:
+    suites:
+        default:
+            contexts:
+                - LoaderContext:
+                    - '@doctrine'
+                    - '@coop_tilleuls_migration.command.load'
+                - TransformerContext:
+                    - '@doctrine'
+    extensions:
+        Behat\Symfony2Extension:
+            kernel:
+                env:       'test'
+                debug:     'true'
+                path:      'features/app/AppKernel.php'
+                bootstrap: 'features/app/bootstrap.php'

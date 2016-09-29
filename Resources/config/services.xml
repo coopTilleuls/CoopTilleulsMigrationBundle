@@ -1,0 +1,40 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <service id="coop_tilleuls_migration.command.load" class="CoopTilleuls\MigrationBundle\Command\MigrationLoadCommand">
+            <argument type="service" id="coop_tilleuls_migration.loader.registry" />
+            <tag name="console.command" />
+        </service>
+
+        <service id="coop_tilleuls_migration.event_listener.transformer" class="CoopTilleuls\MigrationBundle\EventListener\TransformerEventListener">
+            <argument type="service" id="doctrine" />
+            <argument>%coop_tilleuls_migration.legacy_connection_name%</argument>
+            <argument type="service" id="coop_tilleuls_migration.transformer.chain" />
+            <tag name="doctrine.event_listener" event="preFlush" connection="default" />
+            <tag name="doctrine.event_listener" event="prePersist" connection="default" />
+            <tag name="doctrine.event_listener" event="preRemove" connection="default" />
+            <tag name="doctrine.event_listener" event="preUpdate" connection="default" />
+            <tag name="doctrine.event_listener" event="onFlush" connection="default" />
+            <tag name="doctrine.event_listener" event="postFlush" connection="default" />
+            <tag name="kernel.event_listener" event="kernel.exception" method="onError" />
+        </service>
+
+        <service id="coop_tilleuls_migration.loader.registry" class="CoopTilleuls\MigrationBundle\Loader\LoaderRegistry">
+            <argument type="collection" />
+        </service>
+
+        <service id="coop_tilleuls_migration.loader.abstract" class="CoopTilleuls\MigrationBundle\Loader\AbstractLoader" abstract="true">
+            <argument type="service" id="doctrine" />
+            <argument>%coop_tilleuls_migration.legacy_connection_name%</argument>
+            <argument type="service" id="logger" on-invalid="null" />
+        </service>
+
+        <service id="coop_tilleuls_migration.transformer.chain" class="CoopTilleuls\MigrationBundle\Transformer\TransformerChain">
+            <argument type="collection" />
+        </service>
+    </services>
+</container>

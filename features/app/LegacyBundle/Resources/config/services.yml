@@ -1,0 +1,11 @@
+services:
+    legacy.loader.user:
+        class: CoopTilleuls\MigrationBundle\Tests\LegacyBundle\Loader\UserLoader
+        parent: coop_tilleuls_migration.loader.abstract
+        tags:
+            - { name: coop_tilleuls_migration.loader, alias: user }
+
+    legacy.transformer.user:
+        class: CoopTilleuls\MigrationBundle\Tests\LegacyBundle\Transformer\UserTransformer
+        tags:
+            - { name: coop_tilleuls_migration.transformer }

@@ -1,0 +1,53 @@
+{
+    "name": "tilleuls/migration-bundle",
+    "type": "symfony-bundle",
+    "description": "Provides features for continuous migration.",
+    "keywords": [
+        "Migration",
+        "Loaders",
+        "Transformer"
+    ],
+    "license": "MIT",
+    "homepage": "https://les-tilleuls.coop",
+    "authors": [
+        {
+            "name": "Vincent Chalamon",
+            "email": "vincent@les-tilleuls.coop"
+        }
+    ],
+    "require": {
+        "php": ">=5.5",
+        "monolog/monolog": "~1.20",
+        "symfony/config": "~2.3|~3.0",
+        "symfony/console": "~2.3|~3.0",
+        "symfony/dependency-injection": "~2.3|~3.0",
+        "symfony/doctrine-bridge": "~2.2|~3.0",
+        "symfony/stopwatch": "~2.3|~3.0",
+        "symfony/http-kernel": "~2.3|~3.0",
+        "doctrine/doctrine-bundle": "~1.6",
+        "doctrine/orm": "~2.3"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~4.5,<5.0",
+        "behat/behat": "~3.0",
+        "behat/symfony2-extension": "~2.0",
+        "doctrine/data-fixtures": "^1.1",
+        "symfony/browser-kit": "~2.3|~3.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "CoopTilleuls\\MigrationBundle\\": ""
+        },
+        "exclude-from-classmap": ["features/", "tests/"]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "CoopTilleuls\\MigrationBundle\\Tests\\": "features/app"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0.x-dev"
+        }
+    }
+}
