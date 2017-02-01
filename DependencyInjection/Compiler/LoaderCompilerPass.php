@@ -40,7 +40,7 @@ final class LoaderCompilerPass implements CompilerPassInterface
 
         $container->getDefinition('coop_tilleuls_migration.loader.registry')->replaceArgument(
             0,
-            call_user_func_array('array_merge', $loaders)
+            $loaders ? call_user_func_array('array_merge', $loaders) : $loaders
         );
     }
 }
