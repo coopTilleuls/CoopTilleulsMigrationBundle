@@ -1,40 +1,11 @@
-checks:
-    php:
-        code_rating: true
-        duplication: true
-
-build:
-    environment:
-        php:
-            version: 5.5.12
-            ini:
-                error_reporting: 16383
-    tests:
-        override:
-            -
-                command: 'vendor/bin/phpunit --coverage-clover=coverage-report'
-                coverage:
-                    file: 'coverage-report'
-                    format: 'php-clover'
-
 filter:
-    paths:
-        - src/*
     excluded_paths:
-        - tests/*
-        - features/*
+        - 'features/*'
+        - 'tests/*'
+        - 'vendor/*'
 
-tools:
-    external_code_coverage: false
-    php_code_coverage: false
-    php_code_sniffer:
-        config:
-            standard: 'symfony'
-    php_changetracking: true
-    php_cpd: true
-    php_cs_fixer:
-        config:
-            level: 'all'
+checks:
+    php: true
 
 coding_style:
     php:
@@ -43,3 +14,23 @@ coding_style:
                 closure_definition: true
             around_operators:
                 concatenation: false
+
+build:
+    environment:
+        php:
+            version: 5.5.12
+    tests:
+        override:
+            -
+                command: 'vendor/bin/phpunit --coverage-clover=coverage_file'
+                coverage:
+                    file: 'coverage_file'
+                    format: 'php-clover'
+
+tools:
+    php_code_sniffer:
+        config:
+            standard: 'symfony'
+    php_cs_fixer:
+        config:
+            level: 'all'
