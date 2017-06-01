@@ -11,6 +11,8 @@
 
 namespace CoopTilleuls\MigrationBundle\DependencyInjection;
 
+use CoopTilleuls\MigrationBundle\Loader\LoaderInterface;
+use CoopTilleuls\MigrationBundle\Transformer\TransformerInterface;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader;
@@ -34,6 +36,11 @@ final class CoopTilleulsMigrationExtension extends Extension
         $config = $this->processConfiguration($configuration, $configs);
 
         $container->setParameter('coop_tilleuls_migration.legacy_connection_name', $config['legacy_connection_name']);
+
+        $container->registerForAutoconfiguration(LoaderInterface::class)
+            ->addTag('coop_tilleuls_migration.loader');
+        $container->registerForAutoconfiguration(TransformerInterface::class)
+            ->addTag('coop_tilleuls_migration.transformer');
 
         $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.xml');
