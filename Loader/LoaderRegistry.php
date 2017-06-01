@@ -45,10 +45,12 @@ class LoaderRegistry
      */
     public function getLoaderByName($name)
     {
-        if (!array_key_exists($name, $this->loaders)) {
-            throw new LoaderNotFoundException($name, array_keys($this->loaders));
+        foreach ($this->loaders as $loader) {
+            if ($name === $loader->getName()) {
+                return $loader;
+            }
         }
 
-        return $this->loaders[$name];
+        throw new LoaderNotFoundException($name);
     }
 }

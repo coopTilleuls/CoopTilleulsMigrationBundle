@@ -29,6 +29,7 @@ final class TransformerCompilerPass implements CompilerPassInterface
         foreach ($container->findTaggedServiceIds('coop_tilleuls_migration.transformer') as $id => $attributes) {
             $transformers[] = new Reference($id);
         }
+
         $container->getDefinition('coop_tilleuls_migration.transformer.chain')->replaceArgument(0, $transformers);
     }
 }

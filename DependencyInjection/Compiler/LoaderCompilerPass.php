@@ -27,20 +27,9 @@ final class LoaderCompilerPass implements CompilerPassInterface
     {
         $loaders = [];
         foreach ($container->findTaggedServiceIds('coop_tilleuls_migration.loader') as $id => $attributes) {
-            if (!isset($attributes[0]['alias']) || empty($attributes[0]['alias'])) {
-                throw new \LogicException(sprintf(
-                    'You must provide an `alias` attribute to the tag "coop_tilleuls_migration.loader" for service "%s".',
-                    $id
-                ));
-            }
-            $priority = isset($attributes[0]['priority']) ? (int) $attributes[0]['priority'] : 0;
-            $loaders[$priority][$attributes[0]['alias']] = new Reference($id);
+            $loaders[] = new Reference($id);
         }
-        krsort($loaders);
 
-        $container->getDefinition('coop_tilleuls_migration.loader.registry')->replaceArgument(
-            0,
-            $loaders ? call_user_func_array('array_merge', $loaders) : $loaders
-        );
+        $container->getDefinition('coop_tilleuls_migration.loader.registry')->replaceArgument(0, $loaders);
     }
 }

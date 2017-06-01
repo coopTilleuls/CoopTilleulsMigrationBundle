@@ -17,7 +17,7 @@ services:
     legacy.loader.user:
         class: MigrationBundle\Loader\UserLoader
         tags:
-            - { name: coop_tilleuls_migration.loader, alias: user }
+            - { name: coop_tilleuls_migration.loader }
 ```
 
 The class is really simple as it just implements `LoaderInterface`:
@@ -52,8 +52,8 @@ final class UserLoader implements LoaderInterface
 }
 ```
 
-Method `getName` must return the name of the loader (which can be similar to its alias in service declaration). Method
-`getNbRows` must return the total of loaded rows (for log usage). Method `execute` will contain the migration script.
+Method `getName` must return the name of the loader. Method `getNbRows` must return the total of loaded rows (for log
+usage). Method `execute` will contain the migration script.
 
 As you can imagine, `getNbRows` & `execute` methods may be similar in some loaders, except about the query to execute.
 That's why an `AbstractLoader` can be used. It already implements `getNbRows` & `execute` methods, ready to use. You
@@ -130,7 +130,7 @@ services:
         class: MigrationBundle\Loader\UserLoader
         parent: coop_tilleuls_migration.loader.abstract
         tags:
-            - { name: coop_tilleuls_migration.loader, alias: user }
+            - { name: coop_tilleuls_migration.loader }
 ```
 
 ## Execute loader

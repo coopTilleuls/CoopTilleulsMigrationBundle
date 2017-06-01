@@ -11,32 +11,50 @@
 
 namespace CoopTilleuls\MigrationBundle\tests\Loader;
 
+use CoopTilleuls\MigrationBundle\Loader\LoaderInterface;
 use CoopTilleuls\MigrationBundle\Loader\LoaderRegistry;
+use Prophecy\Prophecy\ObjectProphecy;
 
 /**
  * @author Vincent Chalamon <vincent@les-tilleuls.coop>
  */
 class LoaderRegistryTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @var LoaderRegistry
+     */
+    private $registry;
+
+    /**
+     * @var LoaderInterface|ObjectProphecy
+     */
+    private $loaderMock;
+
+    protected function setUp()
+    {
+        $this->loaderMock = $this->prophesize(LoaderInterface::class);
+
+        $this->registry = new LoaderRegistry([$this->loaderMock->reveal()]);
+    }
+
     public function testGetLoaders()
     {
-        $registry = new LoaderRegistry(['foo' => 'bar']);
-        $this->assertEquals(['foo' => 'bar'], $registry->getLoaders());
+        $this->assertEquals([$this->loaderMock->reveal()], $this->registry->getLoaders());
     }
 
     public function testGetLoaderByName()
     {
-        $registry = new LoaderRegistry(['foo' => 'bar']);
-        $this->assertEquals('bar', $registry->getLoaderByName('foo'));
+        $this->loaderMock->getName()->willReturn('foo')->shouldBeCalledTimes(1);
+        $this->assertEquals($this->loaderMock->reveal(), $this->registry->getLoaderByName('foo'));
     }
 
     /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Cannot find loader "bar". Loaders available are: foo.
+     * @expectedException \CoopTilleuls\MigrationBundle\Exception\LoaderNotFoundException
+     * @expectedExceptionMessage Cannot find loader "bar".
      */
     public function testGetLoaderByNameException()
     {
-        $registry = new LoaderRegistry(['foo' => 'bar']);
-        $registry->getLoaderByName('bar');
+        $this->loaderMock->getName()->willReturn('foo')->shouldBeCalledTimes(1);
+        $this->registry->getLoaderByName('bar');
     }
 }
