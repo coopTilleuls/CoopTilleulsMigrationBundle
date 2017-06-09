@@ -20,26 +20,8 @@ matrix:
     fast_finish: true
     include:
         - php: 5.5
-          env: SYMFONY_VERSION=2.3.*
-        - php: 5.5
-          env: SYMFONY_VERSION=2.8.*
-        - php: 5.5
-          env: SYMFONY_VERSION=3.3.*
         - php: 5.6
-          env: SYMFONY_VERSION=2.3.*
-        - php: 5.6
-          env: SYMFONY_VERSION=2.8.*
-        - php: 5.6
-          env: SYMFONY_VERSION=3.3.*
         - php: 7.0
-          env: SYMFONY_VERSION=2.3.*
-        - php: 7.0
-          env: SYMFONY_VERSION=2.8.*
-        - php: 7.0
-          env: SYMFONY_VERSION=3.3.*
-
-before_install:
-    - if [ "$SYMFONY_VERSION" != "" ]; then composer require --dev --no-update symfony/symfony:$SYMFONY_VERSION; fi
 
 install:
     - composer install --no-suggest --no-interaction
