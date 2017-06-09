@@ -38,13 +38,4 @@ interface TransformerInterface
      * @param TransformerEvent $event
      */
     public function delete(TransformerEvent $event);
-
-    /**
-     * Check if this transformer supports this object.
-     *
-     * @param TransformerEvent $event
-     *
-     * @return bool
-     */
-    public function supports(TransformerEvent $event);
 }

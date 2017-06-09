@@ -20,6 +20,8 @@ services:
             - { name: coop_tilleuls_migration.loader }
 ```
 
+> Note: using Symfony 3.3 autowiring, this configuration is already registered. You don't have anything to declare :D
+
 The class is really simple as it just implements `LoaderInterface`:
 
 ```php
@@ -123,10 +125,26 @@ services:
 A Symfony command is ready in this bundle, which can be used to execute a specific loader:
 
 ```bash
-php bin/console migration:load user
+php bin/console migration:load MigrationBundle\Loader\UserLoader
 ```
 
-**Change `user` with the name of the loader you want to execute.**
+## Use an alias
+
+It's also possible to specify an alias to your loader:
+
+```yml
+# services.yml
+services:
+    legacy.loader.user:
+        class: MigrationBundle\Loader\UserLoader
+        parent: coop_tilleuls_migration.loader.abstract
+        tags:
+            - { name: coop_tilleuls_migration.loader, alias: user }
+```
+
+```bash
+php bin/console migration:load user
+```
 
 ## Complex loaders
 
