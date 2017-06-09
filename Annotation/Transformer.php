@@ -17,7 +17,7 @@ namespace CoopTilleuls\MigrationBundle\Annotation;
  * @Annotation
  * @Target({"CLASS"})
  */
-final class Transformer
+class Transformer
 {
     public $transformer;
 
