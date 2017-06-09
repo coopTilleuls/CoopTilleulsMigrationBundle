@@ -5,6 +5,11 @@ services:
         tags:
             - { name: coop_tilleuls_migration.loader, alias: user }
 
+    legacy.loader.foo:
+        class: CoopTilleuls\MigrationBundle\Tests\LegacyBundle\Loader\FooLoader
+        tags:
+            - { name: coop_tilleuls_migration.loader }
+
     legacy.transformer.user:
         class: CoopTilleuls\MigrationBundle\Tests\LegacyBundle\Transformer\UserTransformer
         tags:

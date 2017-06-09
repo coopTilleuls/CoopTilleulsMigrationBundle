@@ -11,12 +11,15 @@
 
 namespace CoopTilleuls\MigrationBundle\Tests\TestBundle\Entity;
 
+use CoopTilleuls\MigrationBundle\Annotation\Transformer;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity
  *
  * @author Vincent Chalamon <vincent@les-tilleuls.coop>
+ *
+ * @Transformer("CoopTilleuls\MigrationBundle\Tests\LegacyBundle\Transformer\UserTransformer")
  */
 final class User
 {

@@ -11,15 +11,14 @@
 
 namespace CoopTilleuls\MigrationBundle\Tests\Compiler;
 
-use CoopTilleuls\MigrationBundle\DependencyInjection\Compiler\TransformerCompilerPass;
+use CoopTilleuls\MigrationBundle\DependencyInjection\MigrationCompilerPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
-use Symfony\Component\DependencyInjection\Reference;
 
 /**
  * @author Vincent Chalamon <vincent@les-tilleuls.coop>
  */
-class TransformerCompilerPassTest extends \PHPUnit_Framework_TestCase
+class MigrationCompilerPassTest extends \PHPUnit_Framework_TestCase
 {
     public function testProcess()
     {
@@ -27,13 +26,17 @@ class TransformerCompilerPassTest extends \PHPUnit_Framework_TestCase
         $definitionMock = $this->prophesize(Definition::class);
 
         $containerMock->findTaggedServiceIds('coop_tilleuls_migration.transformer')->willReturn([
-            'foo' => [[]],
+            'foo'    => [['alias' => 'bar']],
+            'lipsum' => [[]],
         ])->shouldBeCalledTimes(1);
 
-        $containerMock->getDefinition('coop_tilleuls_migration.transformer.chain')->willReturn($definitionMock->reveal())->shouldBeCalledTimes(1);
-        $definitionMock->replaceArgument(0, [new Reference('foo')]);
+        $containerMock->getDefinition('foo')->willReturn($definitionMock->reveal())->shouldBeCalledTimes(1);
+        $definitionMock->getClass()->willReturn('\Foo\Bar', '\Lorem\Ipsum')->shouldBeCalledTimes(2);
 
-        $compilerPass = new TransformerCompilerPass();
+        $containerMock->getDefinition('coop_tilleuls_migration.transformer.locator')->willReturn($definitionMock->reveal())->shouldBeCalledTimes(1);
+        $definitionMock->replaceArgument(0, ['bar' => '\Foo\Bar', '\Lorem\Ipsum' => 'lipsum']);
+
+        $compilerPass = new MigrationCompilerPass('coop_tilleuls_migration.transformer', 'coop_tilleuls_migration.transformer.locator');
         $compilerPass->process($containerMock->reveal());
     }
 }

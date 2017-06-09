@@ -6,14 +6,15 @@
 
     <services>
         <service id="coop_tilleuls_migration.command.load" class="CoopTilleuls\MigrationBundle\Command\MigrationLoadCommand">
-            <argument type="service" id="coop_tilleuls_migration.loader.registry" />
+            <argument type="service" id="coop_tilleuls_migration.loader.locator" />
             <tag name="console.command" />
         </service>
 
         <service id="coop_tilleuls_migration.event_listener.transformer" class="CoopTilleuls\MigrationBundle\EventListener\TransformerEventListener">
             <argument type="service" id="doctrine" />
             <argument>%coop_tilleuls_migration.legacy_connection_name%</argument>
-            <argument type="service" id="coop_tilleuls_migration.transformer.chain" />
+            <argument type="service" id="coop_tilleuls_migration.transformer.locator" />
+            <argument type="service" id="annotation_reader" />
             <tag name="doctrine.event_listener" event="preFlush" connection="default" />
             <tag name="doctrine.event_listener" event="prePersist" connection="default" />
             <tag name="doctrine.event_listener" event="preRemove" connection="default" />
@@ -23,8 +24,9 @@
             <tag name="kernel.event_listener" event="kernel.exception" method="onError" />
         </service>
 
-        <service id="coop_tilleuls_migration.loader.registry" class="CoopTilleuls\MigrationBundle\Loader\LoaderRegistry">
+        <service id="coop_tilleuls_migration.loader.locator" class="Symfony\Component\DependencyInjection\ServiceLocator">
             <argument type="collection" />
+            <tag name="container.service_locator" />
         </service>
 
         <service id="coop_tilleuls_migration.loader.abstract" class="CoopTilleuls\MigrationBundle\Loader\AbstractLoader" abstract="true">
@@ -33,8 +35,9 @@
             <argument type="service" id="logger" on-invalid="null" />
         </service>
 
-        <service id="coop_tilleuls_migration.transformer.chain" class="CoopTilleuls\MigrationBundle\Transformer\TransformerChain">
+        <service id="coop_tilleuls_migration.transformer.locator" class="Symfony\Component\DependencyInjection\ServiceLocator">
             <argument type="collection" />
+            <tag name="container.service_locator" />
         </service>
     </services>
 </container>

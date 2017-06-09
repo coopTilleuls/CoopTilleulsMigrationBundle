@@ -37,10 +37,12 @@ final class CoopTilleulsMigrationExtension extends Extension
 
         $container->setParameter('coop_tilleuls_migration.legacy_connection_name', $config['legacy_connection_name']);
 
-        $container->registerForAutoconfiguration(LoaderInterface::class)
-            ->addTag('coop_tilleuls_migration.loader');
-        $container->registerForAutoconfiguration(TransformerInterface::class)
-            ->addTag('coop_tilleuls_migration.transformer');
+        if (method_exists($container, 'registerForAutoconfiguration')) {
+            $container->registerForAutoconfiguration(LoaderInterface::class)
+                ->addTag('coop_tilleuls_migration.loader');
+            $container->registerForAutoconfiguration(TransformerInterface::class)
+                ->addTag('coop_tilleuls_migration.transformer');
+        }
 
         $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.xml');

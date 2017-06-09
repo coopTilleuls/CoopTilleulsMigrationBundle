@@ -32,13 +32,6 @@ final class UserLoader implements LoaderInterface
     /**
      * {@inheritdoc}
      */
-    public function getName()
-    {
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function execute()
     {
     }
@@ -52,12 +45,12 @@ final class UserLoader implements LoaderInterface
 }
 ```
 
-Method `getName` must return the name of the loader. Method `getNbRows` must return the total of loaded rows (for log
-usage). Method `execute` will contain the migration script.
+Method `getNbRows` must return the total of loaded rows (for log usage). Method `execute` will contain the migration
+script.
 
 As you can imagine, `getNbRows` & `execute` methods may be similar in some loaders, except about the query to execute.
 That's why an `AbstractLoader` can be used. It already implements `getNbRows` & `execute` methods, ready to use. You
-just need to implement code specific to your loader: methods `getName`, `load` & `getQuery`.
+just need to implement code specific to your loader: methods `load` & `getQuery`.
 
 ## Configure loader
 
@@ -81,14 +74,6 @@ final class UserLoader extends AbstractLoader
     {
         parent::__construct($registry, $connectionName, $logger);
         $this->connection = $registry->getConnection();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return 'user';
     }
 
     /**
@@ -177,14 +162,6 @@ final class UserLoader implements LoaderInterface
     {
         $this->connection = $registry->getConnection();
         $this->legacyConnection = $registry->getConnection('legacy');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return 'user';
     }
 
     /**

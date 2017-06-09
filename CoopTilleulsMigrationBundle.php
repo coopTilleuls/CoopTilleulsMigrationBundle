@@ -11,8 +11,7 @@
 
 namespace CoopTilleuls\MigrationBundle;
 
-use CoopTilleuls\MigrationBundle\DependencyInjection\Compiler\LoaderCompilerPass;
-use CoopTilleuls\MigrationBundle\DependencyInjection\Compiler\TransformerCompilerPass;
+use CoopTilleuls\MigrationBundle\DependencyInjection\MigrationCompilerPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
@@ -26,7 +25,7 @@ final class CoopTilleulsMigrationBundle extends Bundle
      */
     public function build(ContainerBuilder $container)
     {
-        $container->addCompilerPass(new LoaderCompilerPass());
-        $container->addCompilerPass(new TransformerCompilerPass());
+        $container->addCompilerPass(new MigrationCompilerPass('coop_tilleuls_migration.loader', 'coop_tilleuls_migration.loader.locator', true));
+        $container->addCompilerPass(new MigrationCompilerPass('coop_tilleuls_migration.transformer', 'coop_tilleuls_migration.transformer.locator'));
     }
 }

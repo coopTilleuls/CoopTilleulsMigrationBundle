@@ -67,7 +67,7 @@ abstract class AbstractLoader implements LoaderInterface
         $stopwatch->start('loader');
 
         $this->logger->info('execute query in legacy database', [
-            'loader' => $this->getName(),
+            'loader' => self::class,
             'query' => $this->getQuery(),
         ]);
         $stmt = $this->legacyConnection->executeQuery($this->getQuery());
@@ -79,7 +79,7 @@ abstract class AbstractLoader implements LoaderInterface
 
         $event = $stopwatch->stop('loader');
         $this->logger->info('loader has been successfully executed', [
-            'loader' => $this->getName(),
+            'loader' => self::class,
             'nb_rows' => $this->getNbRows(),
             'duration' => sprintf('%.3F', $event->getDuration() / 1000).'s',
         ]);
@@ -92,7 +92,7 @@ abstract class AbstractLoader implements LoaderInterface
     protected function logUsage($newId, $legacyId = null)
     {
         $this->logger->info('loading in progress', [
-            'loader' => $this->getName(),
+            'loader' => self::class,
             'new_id' => $newId,
             'legacy_id' => $legacyId,
             'memory_peak' => round(memory_get_peak_usage() / 1000000).'M',

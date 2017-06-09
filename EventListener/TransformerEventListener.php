@@ -11,12 +11,15 @@
 
 namespace CoopTilleuls\MigrationBundle\EventListener;
 
+use CoopTilleuls\MigrationBundle\Annotation\Transformer;
 use CoopTilleuls\MigrationBundle\Doctrine\DBAL\DisabledConnection;
 use CoopTilleuls\MigrationBundle\Transformer\TransformerInterface;
+use Doctrine\Common\Annotations\Reader;
 use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\UnitOfWork;
+use Psr\Container\ContainerInterface;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 /**
@@ -24,7 +27,8 @@ use Symfony\Bridge\Doctrine\RegistryInterface;
  */
 final class TransformerEventListener
 {
-    private $transformer;
+    private $transformerLocator;
+    private $reader;
     private $registry;
     private $events = [
         'create' => [],
@@ -37,11 +41,12 @@ final class TransformerEventListener
      */
     private $legacyConnection;
 
-    public function __construct(RegistryInterface $registry, $connectionName, TransformerInterface $transformer)
+    public function __construct(RegistryInterface $registry, $connectionName, ContainerInterface $transformerLocator, Reader $reader)
     {
         $this->registry = $registry;
         $this->legacyConnection = $registry->getConnection($connectionName);
-        $this->transformer = $transformer;
+        $this->transformerLocator = $transformerLocator;
+        $this->reader = $reader;
     }
 
     public function preFlush()
@@ -54,7 +59,9 @@ final class TransformerEventListener
      */
     public function prePersist(LifecycleEventArgs $event)
     {
-        $this->events['create'][] = $event;
+        if ($this->hasTransformer($event->getObject())) {
+            $this->events['create'][] = $event;
+        }
     }
 
     /**
@@ -62,7 +69,9 @@ final class TransformerEventListener
      */
     public function preUpdate(LifecycleEventArgs $event)
     {
-        $this->events['update'][] = $event;
+        if ($this->hasTransformer($event->getObject())) {
+            $this->events['update'][] = $event;
+        }
     }
 
     /**
@@ -70,7 +79,9 @@ final class TransformerEventListener
      */
     public function preRemove(LifecycleEventArgs $event)
     {
-        $this->events['delete'][] = $event;
+        if ($this->hasTransformer($event->getObject())) {
+            $this->events['delete'][] = $event;
+        }
     }
 
     public function onFlush()
@@ -105,15 +116,43 @@ final class TransformerEventListener
                 $em = $event->getObjectManager();
                 /** @var UnitOfWork $uow */
                 $uow = $em->getUnitOfWork();
-                call_user_func([$this->transformer, $action], new TransformerEvent($event->getObject(), $this->registry));
+                $object = $event->getObject();
+                call_user_func([$this->getTransformer($object), $action], new TransformerEvent($object, $this->registry));
                 if ('delete' !== $action) {
-                    $uow->recomputeSingleEntityChangeSet(
-                        $em->getClassMetadata(ClassUtils::getClass($event->getObject())),
-                        $event->getObject()
-                    );
+                    $uow->recomputeSingleEntityChangeSet($em->getClassMetadata(ClassUtils::getClass($object)), $object);
                 }
             }
             $this->events[$action] = [];
         }
+    }
+
+    /**
+     * @param object $object
+     *
+     * @return bool
+     */
+    private function hasTransformer($object)
+    {
+        return null !== $this->getTransformerAnnotation($object);
+    }
+
+    /**
+     * @param object $object
+     *
+     * @return null|Transformer
+     */
+    private function getTransformerAnnotation($object)
+    {
+        return $this->reader->getClassAnnotation(new \ReflectionClass($object), Transformer::class);
+    }
+
+    /**
+     * @param object $object
+     *
+     * @return TransformerInterface
+     */
+    private function getTransformer($object)
+    {
+        return $this->transformerLocator->get($this->getTransformerAnnotation($object)->transformer);
     }
 }
