@@ -60,6 +60,7 @@ EOT
         if (!$this->loaderLocator->has($name)) {
             throw new LoaderNotFoundException($name);
         }
+
         /** @var LoaderInterface $loader */
         $loader = $this->loaderLocator->get($name);
 
