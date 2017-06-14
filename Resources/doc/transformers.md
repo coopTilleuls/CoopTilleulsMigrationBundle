@@ -20,6 +20,23 @@ services:
             - { name: coop_tilleuls_migration.transformer }
 ```
 
+> Note: using Symfony 3.3 autowiring, this configuration is already registered. You don't have anything to declare :D
+
+But you need to add an annotation in your entity to connect it with the right transformer:
+
+```php
+namespace AppBundle\Entity;
+
+use CoopTilleuls\MigrationBundle\Annotation\Transformer;
+
+/**
+ * @Transformer("MigrationBundle\Transformer\UserTransformer")
+ */
+class User
+{
+}
+```
+
 The class is really simple as it just implements `TransformerInterface`:
 
 ```php
@@ -50,18 +67,8 @@ final class UserTransformer implements TransformerInterface
     public function delete(TransformerEvent $event)
     {
     }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function supports(TransformerEvent $event)
-    {
-    }
 }
 ```
-
-Each method receive a `$event` argument. Only the method `supports` must return a value, which should be boolean. This
-method checks if current transformer supports related object.
 
 ## Legacy mapping
 
@@ -128,14 +135,6 @@ final class UserTransformer implements TransformerInterface
 
         $legacyEm->remove($legacyUser);
         $legacyEm->flush();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function supports(TransformerEvent $event)
-    {
-        return $event->getObject() instanceof User;
     }
 }
 ```

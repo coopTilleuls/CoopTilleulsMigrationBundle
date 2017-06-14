@@ -16,8 +16,8 @@ namespace CoopTilleuls\MigrationBundle\Exception;
  */
 final class LoaderNotFoundException extends \RuntimeException
 {
-    public function __construct($loader, array $loaders)
+    public function __construct($loader)
     {
-        parent::__construct(sprintf('Cannot find loader "%s". Loaders available are: %s.', $loader, implode(', ', $loaders)));
+        parent::__construct(sprintf('Cannot find loader "%s".', $loader));
     }
 }

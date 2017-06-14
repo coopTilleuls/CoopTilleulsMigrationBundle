@@ -34,14 +34,6 @@ final class UserLoader extends AbstractLoader
     /**
      * {@inheritdoc}
      */
-    public function getName()
-    {
-        return 'user';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     protected function getQuery()
     {
         return 'SELECT * FROM user WHERE is_deleted = 0';

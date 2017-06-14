@@ -17,8 +17,10 @@ services:
     legacy.loader.user:
         class: MigrationBundle\Loader\UserLoader
         tags:
-            - { name: coop_tilleuls_migration.loader, alias: user }
+            - { name: coop_tilleuls_migration.loader }
 ```
+
+> Note: using Symfony 3.3 autowiring, this configuration is already registered. You don't have anything to declare :D
 
 The class is really simple as it just implements `LoaderInterface`:
 
@@ -29,13 +31,6 @@ use CoopTilleuls\MigrationBundle\Loader\LoaderInterface;
 
 final class UserLoader implements LoaderInterface
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-    }
-
     /**
      * {@inheritdoc}
      */
@@ -52,12 +47,12 @@ final class UserLoader implements LoaderInterface
 }
 ```
 
-Method `getName` must return the name of the loader (which can be similar to its alias in service declaration). Method
-`getNbRows` must return the total of loaded rows (for log usage). Method `execute` will contain the migration script.
+Method `getNbRows` must return the total of loaded rows (for log usage). Method `execute` will contain the migration
+script.
 
 As you can imagine, `getNbRows` & `execute` methods may be similar in some loaders, except about the query to execute.
 That's why an `AbstractLoader` can be used. It already implements `getNbRows` & `execute` methods, ready to use. You
-just need to implement code specific to your loader: methods `getName`, `load` & `getQuery`.
+just need to implement code specific to your loader: methods `load` & `getQuery`.
 
 ## Configure loader
 
@@ -81,14 +76,6 @@ final class UserLoader extends AbstractLoader
     {
         parent::__construct($registry, $connectionName, $logger);
         $this->connection = $registry->getConnection();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return 'user';
     }
 
     /**
@@ -130,7 +117,7 @@ services:
         class: MigrationBundle\Loader\UserLoader
         parent: coop_tilleuls_migration.loader.abstract
         tags:
-            - { name: coop_tilleuls_migration.loader, alias: user }
+            - { name: coop_tilleuls_migration.loader }
 ```
 
 ## Execute loader
@@ -138,10 +125,26 @@ services:
 A Symfony command is ready in this bundle, which can be used to execute a specific loader:
 
 ```bash
-php bin/console migration:load user
+php bin/console migration:load MigrationBundle\Loader\UserLoader
 ```
 
-**Change `user` with the name of the loader you want to execute.**
+## Use an alias
+
+It's also possible to specify an alias to your loader:
+
+```yml
+# services.yml
+services:
+    legacy.loader.user:
+        class: MigrationBundle\Loader\UserLoader
+        parent: coop_tilleuls_migration.loader.abstract
+        tags:
+            - { name: coop_tilleuls_migration.loader, alias: user }
+```
+
+```bash
+php bin/console migration:load user
+```
 
 ## Complex loaders
 
@@ -177,14 +180,6 @@ final class UserLoader implements LoaderInterface
     {
         $this->connection = $registry->getConnection();
         $this->legacyConnection = $registry->getConnection('legacy');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return 'user';
     }
 
     /**

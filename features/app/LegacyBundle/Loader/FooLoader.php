@@ -9,22 +9,27 @@
  * file that was distributed with this source code.
  */
 
-namespace CoopTilleuls\MigrationBundle\Loader;
+namespace CoopTilleuls\MigrationBundle\Tests\LegacyBundle\Loader;
+
+use CoopTilleuls\MigrationBundle\Loader\LoaderInterface;
 
 /**
  * @author Vincent Chalamon <vincent@les-tilleuls.coop>
  */
-interface LoaderInterface
+final class FooLoader implements LoaderInterface
 {
     /**
-     * Execute loader.
+     * {@inheritdoc}
      */
-    public function execute();
+    public function execute()
+    {
+    }
 
     /**
-     * Get the number of rows imported.
-     *
-     * @return int
+     * {@inheritdoc}
      */
-    public function getNbRows();
+    public function getNbRows()
+    {
+        return 3;
+    }
 }

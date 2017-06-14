@@ -11,16 +11,19 @@
 
 namespace CoopTilleuls\MigrationBundle\tests\EventListener;
 
+use CoopTilleuls\MigrationBundle\Annotation\Transformer;
 use CoopTilleuls\MigrationBundle\Doctrine\DBAL\DisabledConnection;
 use CoopTilleuls\MigrationBundle\EventListener\TransformerEvent;
 use CoopTilleuls\MigrationBundle\EventListener\TransformerEventListener;
 use CoopTilleuls\MigrationBundle\Transformer\TransformerInterface;
+use Doctrine\Common\Annotations\Reader;
 use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\UnitOfWork;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
+use Psr\Container\ContainerInterface;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 /**
@@ -39,6 +42,16 @@ class TransformerEventListenerTest extends \PHPUnit_Framework_TestCase
     private $registryMock;
 
     /**
+     * @var ObjectProphecy|ContainerInterface
+     */
+    private $locatorMock;
+
+    /**
+     * @var ObjectProphecy|Reader
+     */
+    private $readerMock;
+
+    /**
      * @var ObjectProphecy|DisabledConnection
      */
     private $connectionMock;
@@ -49,9 +62,19 @@ class TransformerEventListenerTest extends \PHPUnit_Framework_TestCase
     private $transformerMock;
 
     /**
+     * @var ObjectProphecy|Transformer
+     */
+    private $annotationMock;
+
+    /**
      * @var ObjectProphecy|LifecycleEventArgs
      */
     private $eventMock;
+
+    /**
+     * @var ObjectProphecy
+     */
+    private $objectMock;
 
     /**
      * @var \ReflectionProperty
@@ -62,15 +85,20 @@ class TransformerEventListenerTest extends \PHPUnit_Framework_TestCase
     {
         $this->transformerMock = $this->prophesize(TransformerInterface::class);
         $this->registryMock = $this->prophesize(RegistryInterface::class);
+        $this->locatorMock = $this->prophesize(ContainerInterface::class);
+        $this->readerMock = $this->prophesize(Reader::class);
         $this->connectionMock = $this->prophesize(DisabledConnection::class);
+        $this->annotationMock = $this->prophesize(Transformer::class);
         $this->eventMock = $this->prophesize(LifecycleEventArgs::class);
+        $this->objectMock = $this->prophesize(\stdClass::class);
 
-        $this->registryMock->getConnection('legacy')->willReturn($this->connectionMock->reveal())->shouldBeCalledTimes(1);
+        $this->registryMock->getConnection('legacy')->willReturn($this->connectionMock)->shouldBeCalledTimes(1);
 
         $this->eventListener = new TransformerEventListener(
             $this->registryMock->reveal(),
             'legacy',
-            $this->transformerMock->reveal()
+            $this->locatorMock->reveal(),
+            $this->readerMock->reveal()
         );
 
         $this->reflectionProperty = new \ReflectionProperty(TransformerEventListener::class, 'events');
@@ -85,6 +113,11 @@ class TransformerEventListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testPrePersist()
     {
+        $this->eventMock->getObject()->willReturn($this->objectMock)->shouldBeCalledTimes(1);
+        $this->readerMock->getClassAnnotation(Argument::type('\ReflectionClass'), Transformer::class)
+            ->willReturn($this->annotationMock)
+            ->shouldBeCalledTimes(1);
+
         $this->eventListener->prePersist($this->eventMock->reveal());
         $this->assertEquals([
             'create' => [$this->eventMock->reveal()],
@@ -95,6 +128,11 @@ class TransformerEventListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testPreUpdate()
     {
+        $this->eventMock->getObject()->willReturn($this->objectMock)->shouldBeCalledTimes(1);
+        $this->readerMock->getClassAnnotation(Argument::type('\ReflectionClass'), Transformer::class)
+            ->willReturn($this->annotationMock)
+            ->shouldBeCalledTimes(1);
+
         $this->eventListener->preUpdate($this->eventMock->reveal());
         $this->assertEquals([
             'create' => [],
@@ -105,6 +143,11 @@ class TransformerEventListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testPreRemove()
     {
+        $this->eventMock->getObject()->willReturn($this->objectMock)->shouldBeCalledTimes(1);
+        $this->readerMock->getClassAnnotation(Argument::type('\ReflectionClass'), Transformer::class)
+            ->willReturn($this->annotationMock)
+            ->shouldBeCalledTimes(1);
+
         $this->eventListener->preRemove($this->eventMock->reveal());
         $this->assertEquals([
             'create' => [],
@@ -122,17 +165,23 @@ class TransformerEventListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testPostFlush()
     {
+        $this->eventMock->getObject()->willReturn($this->objectMock)->shouldBeCalledTimes(6);
+        $this->readerMock->getClassAnnotation(Argument::type('\ReflectionClass'), Transformer::class)
+            ->willReturn($this->annotationMock)
+            ->shouldBeCalledTimes(6);
+        $this->locatorMock->get(Argument::any())->willReturn($this->transformerMock)->shouldBeCalledTimes(3);
+
         $this->eventListener->prePersist($this->eventMock->reveal());
         $this->eventListener->preUpdate($this->eventMock->reveal());
         $this->eventListener->preRemove($this->eventMock->reveal());
 
         $emMock = $this->prophesize(EntityManagerInterface::class);
         $uowMock = $this->prophesize(UnitOfWork::class);
-        $objectMock = $this->prophesize(\stdClass::class);
+        $objectMock = $this->objectMock;
         $classMetadataMock = $this->prophesize(ClassMetadata::class);
-        $this->eventMock->getObjectManager()->willReturn($emMock->reveal())->shouldBeCalledTimes(3);
-        $emMock->getUnitOfWork()->willReturn($uowMock->reveal())->shouldBeCalledTimes(3);
-        $this->eventMock->getObject()->willReturn($objectMock->reveal())->shouldBeCalledTimes(7);
+
+        $this->eventMock->getObjectManager()->willReturn($emMock)->shouldBeCalledTimes(3);
+        $emMock->getUnitOfWork()->willReturn($uowMock)->shouldBeCalledTimes(3);
         $this->transformerMock->create(Argument::that(function ($event) use ($objectMock) {
             return $event instanceof TransformerEvent &&
                    $this->registryMock->reveal() === $event->getRegistry() &&
@@ -148,7 +197,7 @@ class TransformerEventListenerTest extends \PHPUnit_Framework_TestCase
             $this->registryMock->reveal() === $event->getRegistry() &&
             $objectMock->reveal() === $event->getObject();
         }))->shouldBeCalledTimes(1);
-        $emMock->getClassMetadata(get_class($objectMock->reveal()))->willReturn($classMetadataMock->reveal())->shouldBeCalledTimes(2);
+        $emMock->getClassMetadata(get_class($objectMock->reveal()))->willReturn($classMetadataMock)->shouldBeCalledTimes(2);
         $uowMock->recomputeSingleEntityChangeSet($classMetadataMock->reveal(), $objectMock->reveal())->shouldBeCalledTimes(2);
 
         $this->connectionMock->enable()->shouldBeCalledTimes(1);

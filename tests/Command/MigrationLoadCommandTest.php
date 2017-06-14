@@ -13,7 +13,8 @@ namespace CoopTilleuls\MigrationBundle\tests\Command;
 
 use CoopTilleuls\MigrationBundle\Command\MigrationLoadCommand;
 use CoopTilleuls\MigrationBundle\Loader\LoaderInterface;
-use CoopTilleuls\MigrationBundle\Loader\LoaderRegistry;
+use Prophecy\Argument;
+use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\StyleInterface;
@@ -24,7 +25,7 @@ use Symfony\Component\Console\Style\StyleInterface;
 class MigrationLoadCommandTest extends \PHPUnit_Framework_TestCase
 {
     private $command;
-    private $loaderRegistryMock;
+    private $locatorMock;
     private $inputMock;
     private $loaderMock;
     private $outputMock;
@@ -33,7 +34,7 @@ class MigrationLoadCommandTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->loaderRegistryMock = $this->prophesize(LoaderRegistry::class);
+        $this->locatorMock = $this->prophesize(ContainerInterface::class);
         $this->styleMock = $this->prophesize(StyleInterface::class);
         $this->inputMock = $this->prophesize(InputInterface::class);
         $this->outputMock = $this->prophesize(OutputInterface::class);
@@ -41,18 +42,17 @@ class MigrationLoadCommandTest extends \PHPUnit_Framework_TestCase
 
         $this->reflection = new \ReflectionMethod(MigrationLoadCommand::class, 'execute');
         $this->reflection->setAccessible(true);
-        $this->command = new MigrationLoadCommand($this->loaderRegistryMock->reveal());
+        $this->command = new MigrationLoadCommand($this->locatorMock->reveal());
         $this->command->setStyle($this->styleMock->reveal());
 
         $this->inputMock->getArgument('loader')->willReturn('user')->shouldBeCalledTimes(1);
-        $this->loaderRegistryMock->getLoaderByName('user')->willReturn($this->loaderMock->reveal())->shouldBeCalledTimes(1);
-
-        $this->loaderMock->getName()->willReturn('user')->shouldBeCalledTimes(2);
-        $this->styleMock->title('Loading data from loader "user"')->shouldBeCalledTimes(1);
     }
 
     public function testExecute()
     {
+        $this->locatorMock->has('user')->willReturn(true)->shouldBeCalledTimes(1);
+        $this->locatorMock->get('user')->willReturn($this->loaderMock)->shouldBeCalledTimes(1);
+        $this->styleMock->title('Loading data from loader "user"')->shouldBeCalledTimes(1);
         $this->loaderMock->execute()->shouldBeCalledTimes(1);
 
         $this->loaderMock->getNbRows()->willReturn(2)->shouldBeCalledTimes(2);
@@ -62,8 +62,23 @@ class MigrationLoadCommandTest extends \PHPUnit_Framework_TestCase
         $this->reflection->invoke($this->command, $this->inputMock->reveal(), $this->outputMock->reveal());
     }
 
+    /**
+     * @expectedException \CoopTilleuls\MigrationBundle\Exception\LoaderNotFoundException
+     * @expectedExceptionMessage Cannot find loader "user".
+     */
+    public function testExecuteNoLoader()
+    {
+        $this->locatorMock->has('user')->willReturn(false)->shouldBeCalledTimes(1);
+        $this->locatorMock->get(Argument::any())->shouldNotBeCalled();
+
+        $this->reflection->invoke($this->command, $this->inputMock->reveal(), $this->outputMock->reveal());
+    }
+
     public function testExecuteNoData()
     {
+        $this->locatorMock->has('user')->willReturn(true)->shouldBeCalledTimes(1);
+        $this->locatorMock->get('user')->willReturn($this->loaderMock)->shouldBeCalledTimes(1);
+        $this->styleMock->title('Loading data from loader "user"')->shouldBeCalledTimes(1);
         $this->loaderMock->execute()->shouldBeCalledTimes(1);
 
         $this->loaderMock->getNbRows()->willReturn(0)->shouldBeCalledTimes(1);

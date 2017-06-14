@@ -11,7 +11,9 @@
 
 namespace CoopTilleuls\MigrationBundle\Command;
 
-use CoopTilleuls\MigrationBundle\Loader\LoaderRegistry;
+use CoopTilleuls\MigrationBundle\Exception\LoaderNotFoundException;
+use CoopTilleuls\MigrationBundle\Loader\LoaderInterface;
+use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -24,14 +26,14 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  */
 final class MigrationLoadCommand extends Command
 {
-    private $loaderRegistry;
+    private $loaderLocator;
     private $style;
 
-    public function __construct(LoaderRegistry $loaderRegistry)
+    public function __construct(ContainerInterface $loaderLocator)
     {
         parent::__construct('migration:load');
 
-        $this->loaderRegistry = $loaderRegistry;
+        $this->loaderLocator = $loaderLocator;
 
         $this
             ->setDescription('Import data from legacy to current database')
@@ -54,11 +56,17 @@ EOT
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $loader = $this->loaderRegistry->getLoaderByName($input->getArgument('loader'));
+        $name = $input->getArgument('loader');
+        if (!$this->loaderLocator->has($name)) {
+            throw new LoaderNotFoundException($name);
+        }
+
+        /** @var LoaderInterface $loader */
+        $loader = $this->loaderLocator->get($name);
 
         /** @var StyleInterface $io */
         $io = $this->style ?: new SymfonyStyle($input, $output);
-        $io->title(sprintf('Loading data from loader "%s"', $loader->getName()));
+        $io->title(sprintf('Loading data from loader "%s"', $name));
 
         $loader->execute();
 
@@ -68,7 +76,7 @@ EOT
             $io->text(sprintf('%d record(s) successfully loaded', $loader->getNbRows()));
         }
 
-        $io->success(sprintf('Loader "%s" successfully executed', $loader->getName()));
+        $io->success(sprintf('Loader "%s" successfully executed', $name));
 
         return 0;
     }

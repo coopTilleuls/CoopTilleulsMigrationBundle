@@ -82,17 +82,11 @@ final class LoaderContext implements Context
      */
     public function usersMustBeImported()
     {
-        $content = trim(preg_replace('/[ ]{2,}/', '', $this->output->fetch()));
+        $content = trim(preg_replace('/[ \/]{2,}/', '', $this->output->fetch()));
         \PHPUnit_Framework_Assert::assertEquals(0, $this->statusCode, sprintf("An error occurred on command:\n%s", $content));
-        \PHPUnit_Framework_Assert::assertEquals(<<<'EOF'
-Loading data from loader "user"
-===============================
-
- 2 record(s) successfully loaded
-
- [OK] Loader "user" successfully executed
-EOF
-            , $content);
+        \PHPUnit_Framework_Assert::assertContains('Loading data from loader "user"', $content);
+        \PHPUnit_Framework_Assert::assertContains('2 record(s) successfully loaded', $content);
+        \PHPUnit_Framework_Assert::assertContains('[OK] Loader "user" successfully executed', $content);
 
         $em = $this->doctrine->getManagerForClass(User::class);
         $users = $em->getRepository(User::class)->findAll();
@@ -121,18 +115,33 @@ EOF
      */
     public function noUsersMustBeImported()
     {
+        $content = trim(preg_replace('/[ \/]{2,}/', '', $this->output->fetch()));
         \PHPUnit_Framework_Assert::assertEquals(0, $this->statusCode);
-        \PHPUnit_Framework_Assert::assertEquals(<<<'EOF'
-Loading data from loader "user"
-===============================
-
- No data loaded
-
- [OK] Loader "user" successfully executed
-EOF
-            , trim(preg_replace('/[ ]{2,}/', '', $this->output->fetch())));
+        \PHPUnit_Framework_Assert::assertContains('Loading data from loader "user"', $content);
+        \PHPUnit_Framework_Assert::assertContains('No data loaded', $content);
+        \PHPUnit_Framework_Assert::assertContains('[OK] Loader "user" successfully executed', $content);
 
         $em = $this->doctrine->getManagerForClass(User::class);
         \PHPUnit_Framework_Assert::assertCount(0, $em->getRepository(User::class)->findAll());
+    }
+
+    /**
+     * @When I execute foo loader
+     */
+    public function iExecuteFooLoader()
+    {
+        $this->statusCode = $this->command->run(new StringInput('CoopTilleuls\\\MigrationBundle\\\Tests\\\LegacyBundle\\\Loader\\\FooLoader'), $this->output);
+    }
+
+    /**
+     * @Then foo loader must have been executed
+     */
+    public function fooLoaderMustHaveBeenExecuted()
+    {
+        $content = trim(preg_replace('/[ \/]{2,}/', '', $this->output->fetch()));
+        \PHPUnit_Framework_Assert::assertEquals(0, $this->statusCode);
+        \PHPUnit_Framework_Assert::assertContains('Loading data from loader "CoopTilleuls\MigrationBundle\Tests\LegacyBundle\Loader\FooLoader"', $content);
+        \PHPUnit_Framework_Assert::assertContains('3 record(s) successfully loaded', $content);
+        \PHPUnit_Framework_Assert::assertContains('[OK] Loader "CoopTilleuls\MigrationBundle\Tests\LegacyBundle\Loader\FooLoader" successfully executed', $content);
     }
 }
