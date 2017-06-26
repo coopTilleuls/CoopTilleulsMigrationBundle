@@ -12,6 +12,7 @@
 namespace CoopTilleuls\MigrationBundle\Tests\Compiler;
 
 use CoopTilleuls\MigrationBundle\DependencyInjection\MigrationCompilerPass;
+use CoopTilleuls\MigrationBundle\Loader\LoaderInterface;
 use Prophecy\Argument;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
@@ -29,25 +30,24 @@ class MigrationCompilerPassTest extends \PHPUnit_Framework_TestCase
         $locatorDefinitionMock = $this->prophesize(Definition::class);
 
         $containerMock->findTaggedServiceIds('coop_tilleuls_migration.transformer')->willReturn([
-            'foo'    => [['alias' => 'bar']],
-            'lipsum' => [[]],
+            'CoopTilleuls\MigrationBundle\Tests\Compiler\FooLoader' => [[]],
+            'CoopTilleuls\MigrationBundle\Tests\Compiler\BarLoader' => [['alias' => 'bar']],
         ])->shouldBeCalledTimes(1);
 
-        $containerMock->getDefinition('foo')->willReturn($definitionMock->reveal())->shouldBeCalledTimes(1);
-        $containerMock->getDefinition('lipsum')->willReturn($definitionMock->reveal())->shouldBeCalledTimes(1);
-        $definitionMock->getClass()->willReturn('\Foo\Bar', '\Lorem\Ipsum')->shouldBeCalledTimes(2);
+        $containerMock->getDefinition('CoopTilleuls\MigrationBundle\Tests\Compiler\FooLoader')->willReturn($definitionMock->reveal())->shouldBeCalledTimes(1);
+        $containerMock->getDefinition('CoopTilleuls\MigrationBundle\Tests\Compiler\BarLoader')->willReturn($definitionMock->reveal())->shouldBeCalledTimes(1);
+        $definitionMock->getClass()->willReturn('CoopTilleuls\MigrationBundle\Tests\Compiler\FooLoader', 'CoopTilleuls\MigrationBundle\Tests\Compiler\BarLoader')->shouldBeCalledTimes(2);
 
         $containerMock->getDefinition('coop_tilleuls_migration.transformer.locator')->willReturn($locatorDefinitionMock->reveal())->shouldBeCalledTimes(1);
-        $locatorDefinitionMock->replaceArgument(0, Argument::that(function ($argument) {
-            return is_array($argument)
-                && ['bar', '\Lorem\Ipsum'] === array_keys($argument)
-                && $argument['bar'] instanceof Reference
-                && 'foo' === $argument['bar']->__toString()
-                && $argument['\Lorem\Ipsum'] instanceof Reference
-                && 'lipsum' === $argument['\Lorem\Ipsum']->__toString();
-        }));
+        $locatorDefinitionMock->replaceArgument(0, Argument::type('array'))->shouldBeCalledTimes(1);
 
         $compilerPass = new MigrationCompilerPass('coop_tilleuls_migration.transformer', 'coop_tilleuls_migration.transformer.locator', true);
         $compilerPass->process($containerMock->reveal());
     }
 }
+
+class FooLoader
+{}
+
+class BarLoader
+{}

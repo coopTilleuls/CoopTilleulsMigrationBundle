@@ -11,6 +11,7 @@
 
 namespace CoopTilleuls\MigrationBundle\DependencyInjection;
 
+use Doctrine\Common\Inflector\Inflector;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
@@ -38,11 +39,18 @@ final class MigrationCompilerPass implements CompilerPassInterface
     {
         $services = [];
         foreach ($container->findTaggedServiceIds($this->tag) as $id => $attributes) {
-            $alias = $container->getDefinition($id)->getClass();
+            $class = $container->getDefinition($id)->getClass();
+            $reflection = new \ReflectionClass($class);
+            $aliases = [
+                $class,
+                Inflector::tableize(preg_replace('/^(.*)Loader$/i', '$1', $reflection->getShortName())),
+            ];
             if (true === $this->allowAlias && isset($attributes[0]['alias'])) {
-                $alias = $attributes[0]['alias'];
+                $aliases[] = $attributes[0]['alias'];
             }
-            $services[$alias] = new Reference($id);
+            foreach (array_unique($aliases) as $alias) {
+                $services[$alias] = new Reference($id);
+            }
         }
 
         $container->getDefinition($this->locator)->replaceArgument(0, $services);

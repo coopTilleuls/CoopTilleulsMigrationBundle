@@ -126,11 +126,19 @@ final class LoaderContext implements Context
     }
 
     /**
-     * @When I execute foo loader
+     * @When I execute foo loader by its class name
      */
-    public function iExecuteFooLoader()
+    public function iExecuteFooLoaderByItsClassName()
     {
         $this->statusCode = $this->command->run(new StringInput('CoopTilleuls\\\MigrationBundle\\\Tests\\\LegacyBundle\\\Loader\\\FooLoader'), $this->output);
+    }
+
+    /**
+     * @When I execute foo loader by its alias
+     */
+    public function iExecuteFooLoaderByItsAlias()
+    {
+        $this->statusCode = $this->command->run(new StringInput('foo'), $this->output);
     }
 
     /**
@@ -140,8 +148,8 @@ final class LoaderContext implements Context
     {
         $content = trim(preg_replace('/[ \/]{2,}/', '', $this->output->fetch()));
         \PHPUnit_Framework_Assert::assertEquals(0, $this->statusCode);
-        \PHPUnit_Framework_Assert::assertContains('Loading data from loader "CoopTilleuls\MigrationBundle\Tests\LegacyBundle\Loader\FooLoader"', $content);
+        \PHPUnit_Framework_Assert::assertContains('Loading data from loader', $content);
         \PHPUnit_Framework_Assert::assertContains('3 record(s) successfully loaded', $content);
-        \PHPUnit_Framework_Assert::assertContains('[OK] Loader "CoopTilleuls\MigrationBundle\Tests\LegacyBundle\Loader\FooLoader" successfully executed', $content);
+        \PHPUnit_Framework_Assert::assertContains('successfully executed', $content);
     }
 }
