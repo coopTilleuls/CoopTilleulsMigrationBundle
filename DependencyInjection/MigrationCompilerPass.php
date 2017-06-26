@@ -41,10 +41,8 @@ final class MigrationCompilerPass implements CompilerPassInterface
         foreach ($container->findTaggedServiceIds($this->tag) as $id => $attributes) {
             $class = $container->getDefinition($id)->getClass();
             $reflection = new \ReflectionClass($class);
-            $aliases = [
-                $class,
-                Inflector::tableize(preg_replace('/^(.*)Loader$/i', '$1', $reflection->getShortName())),
-            ];
+            $alias = Inflector::tableize(preg_replace('/^(.*)Loader$/i', '$1', $reflection->getShortName()));
+            $aliases = [$class, $alias, str_replace('_', '-', $alias)];
             if (true === $this->allowAlias && isset($attributes[0]['alias'])) {
                 $aliases[] = $attributes[0]['alias'];
             }
