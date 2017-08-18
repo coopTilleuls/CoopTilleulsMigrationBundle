@@ -133,7 +133,7 @@ final class TransformerEventListener
      */
     private function hasTransformer($object)
     {
-        return null !== $this->getTransformerAnnotation($object);
+        return null !== $this->getTransformerAnnotation($object) && $this->transformerLocator->has($this->getTransformerAnnotation($object)->transformer);
     }
 
     /**
