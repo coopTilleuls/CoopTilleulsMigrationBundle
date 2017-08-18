@@ -116,7 +116,8 @@ class TransformerEventListenerTest extends \PHPUnit_Framework_TestCase
         $this->eventMock->getObject()->willReturn($this->objectMock)->shouldBeCalledTimes(1);
         $this->readerMock->getClassAnnotation(Argument::type('\ReflectionClass'), Transformer::class)
             ->willReturn($this->annotationMock)
-            ->shouldBeCalledTimes(1);
+            ->shouldBeCalledTimes(2);
+        $this->locatorMock->has(Argument::any())->willReturn(true)->shouldBeCalledTimes(1);
 
         $this->eventListener->prePersist($this->eventMock->reveal());
         $this->assertEquals([
@@ -131,7 +132,8 @@ class TransformerEventListenerTest extends \PHPUnit_Framework_TestCase
         $this->eventMock->getObject()->willReturn($this->objectMock)->shouldBeCalledTimes(1);
         $this->readerMock->getClassAnnotation(Argument::type('\ReflectionClass'), Transformer::class)
             ->willReturn($this->annotationMock)
-            ->shouldBeCalledTimes(1);
+            ->shouldBeCalledTimes(2);
+        $this->locatorMock->has(Argument::any())->willReturn(true)->shouldBeCalledTimes(1);
 
         $this->eventListener->preUpdate($this->eventMock->reveal());
         $this->assertEquals([
@@ -146,7 +148,8 @@ class TransformerEventListenerTest extends \PHPUnit_Framework_TestCase
         $this->eventMock->getObject()->willReturn($this->objectMock)->shouldBeCalledTimes(1);
         $this->readerMock->getClassAnnotation(Argument::type('\ReflectionClass'), Transformer::class)
             ->willReturn($this->annotationMock)
-            ->shouldBeCalledTimes(1);
+            ->shouldBeCalledTimes(2);
+        $this->locatorMock->has(Argument::any())->willReturn(true)->shouldBeCalledTimes(1);
 
         $this->eventListener->preRemove($this->eventMock->reveal());
         $this->assertEquals([
@@ -168,7 +171,8 @@ class TransformerEventListenerTest extends \PHPUnit_Framework_TestCase
         $this->eventMock->getObject()->willReturn($this->objectMock)->shouldBeCalledTimes(6);
         $this->readerMock->getClassAnnotation(Argument::type('\ReflectionClass'), Transformer::class)
             ->willReturn($this->annotationMock)
-            ->shouldBeCalledTimes(6);
+            ->shouldBeCalledTimes(9);
+        $this->locatorMock->has(Argument::any())->willReturn(true)->shouldBeCalledTimes(3);
         $this->locatorMock->get(Argument::any())->willReturn($this->transformerMock)->shouldBeCalledTimes(3);
 
         $this->eventListener->prePersist($this->eventMock->reveal());
