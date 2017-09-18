@@ -11,6 +11,7 @@
 
 namespace CoopTilleuls\MigrationBundle\DependencyInjection;
 
+use CoopTilleuls\MigrationBundle\Loader\AbstractLoader;
 use Doctrine\Common\Inflector\Inflector;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -39,8 +40,16 @@ final class MigrationCompilerPass implements CompilerPassInterface
     {
         $services = [];
         foreach ($container->findTaggedServiceIds($this->tag) as $id => $attributes) {
-            $class = $container->getDefinition($id)->getClass();
+            $definition = $container->getDefinition($id);
+            $class = $definition->getClass();
             $reflection = new \ReflectionClass($class);
+
+            // Override AbstractLoader parameters for autowiring
+            if ($reflection->isSubclassOf(AbstractLoader::class)) {
+                $definition->replaceArgument('$connectionName', $container->getParameter('coop_tilleuls_migration.legacy_connection_name'));
+            }
+
+            // Generate aliases
             $alias = Inflector::tableize(preg_replace('/^(.*)Loader$/i', '$1', $reflection->getShortName()));
             $aliases = [$class, $alias, str_replace('_', '-', $alias)];
             if (true === $this->allowAlias && isset($attributes[0]['alias'])) {
