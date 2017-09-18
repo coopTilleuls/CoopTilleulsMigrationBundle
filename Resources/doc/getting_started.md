@@ -6,7 +6,7 @@ Getting started with CoopTilleulsMigrationBundle
 Installing CoopTilleulsMigrationBundle can be done easily through [Composer](https://getcomposer.org/). Update your
 `composer.json` file as following:
 
-```json
+```
 {
     ...
     "require": [
