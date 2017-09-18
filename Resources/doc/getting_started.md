@@ -9,15 +9,9 @@ Installing CoopTilleulsMigrationBundle can be done easily through [Composer](htt
 ```json
 {
     ...
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/coopTilleuls/migration-bundle"
-        }
-    ],
     "require": [
         ...
-        "tilleuls/migration-bundle": "1.0@dev"
+        "tilleuls/migration-bundle": "^1.0"
     ]
 }
 ```
