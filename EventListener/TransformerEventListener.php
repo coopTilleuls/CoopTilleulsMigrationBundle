@@ -143,6 +143,12 @@ final class TransformerEventListener
      */
     private function getTransformerAnnotation($object)
     {
+        $pattern = 'Proxies\\__CG__\\';
+        if (0 === strpos(get_class($object), $pattern)) {
+            $notProxiClassName = substr(get_class($object), strlen($pattern));
+            $object = new $notProxiClassName;
+        }
+
         return $this->reader->getClassAnnotation(new \ReflectionClass($object), Transformer::class);
     }
 
