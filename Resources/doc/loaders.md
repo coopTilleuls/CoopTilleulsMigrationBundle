@@ -125,7 +125,7 @@ services:
 A Symfony command is ready in this bundle, which can be used to execute a specific loader:
 
 ```bash
-php bin/console migration:load MigrationBundle\Loader\UserLoader
+php bin/console migration:load 'MigrationBundle\Loader\UserLoader'
 ```
 
 ## Use an alias
