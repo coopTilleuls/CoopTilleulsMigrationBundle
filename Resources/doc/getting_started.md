@@ -55,7 +55,7 @@ doctrine:
                 charset:        "UTF8"
                 server_version: "5.6"
             legacy:
-                wrapper_class:  "CoopTilleuls\MigrationBundle\Doctrine\DBAL\DisabledConnection"
+                wrapper_class:  'CoopTilleuls\MigrationBundle\Doctrine\DBAL\DisabledConnection'
                 driver:         "%legacy_database_driver%"
                 host:           "%legacy_database_host%"
                 port:           "%legacy_database_port%"
