@@ -135,11 +135,36 @@ final class TransformerEventListener
 
     private function getTransformerAnnotation(object $object): ?Transformer
     {
-        return $this->reader->getClassAnnotation(new \ReflectionClass($object), Transformer::class);
+        return $this->reader->getClassAnnotation(new \ReflectionClass(static::getRealClass($object)), Transformer::class);
     }
 
     private function getTransformer(object $object): TransformerInterface
     {
         return $this->transformerLocator->get($this->getTransformerAnnotation($object)->transformer);
+    }
+
+    private static function getRealClass($className): string
+    {
+        if (\is_object($className)) {
+            $className = \get_class($className);
+        }
+
+        $positionCg = strrpos($className, '\\__CG__\\');
+        $positionPm = strrpos($className, '\\__PM__\\');
+        if ((false === $positionCg) && (false === $positionPm)) {
+            return $className;
+        }
+
+        if (false !== $positionCg) {
+            return substr($className, $positionCg + 8);
+        }
+
+        $className = ltrim($className, '\\');
+
+        return substr(
+            $className,
+            8 + $positionPm,
+            strrpos($className, '\\') - ($positionPm + 8)
+        );
     }
 }

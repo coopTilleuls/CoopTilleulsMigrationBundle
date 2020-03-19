@@ -34,6 +34,7 @@
         "doctrine/data-fixtures": "^1.2",
         "friends-of-behat/symfony-extension": "^2.0.10@beta",
         "friendsofphp/php-cs-fixer": "^2.15.5",
+        "ocramius/proxy-manager": "^2.0.4",
         "phpspec/prophecy": "^1.10",
         "phpstan/phpstan": "^0.12.17",
         "phpunit/phpunit": "^8.0",
