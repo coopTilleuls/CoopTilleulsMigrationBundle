@@ -20,13 +20,27 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace CoopTilleuls\MigrationBundle\Tests\TestBundle;
+namespace CoopTilleuls\MigrationBundle\Transformer;
 
-use Symfony\Component\HttpKernel\Bundle\Bundle;
+use CoopTilleuls\MigrationBundle\EventListener\TransformerEvent;
 
 /**
  * @author Vincent Chalamon <vincent@les-tilleuls.coop>
  */
-final class TestBundle extends Bundle
+interface TransformerInterface
 {
+    /**
+     * Create legacy record from local object.
+     */
+    public function create(TransformerEvent $event): void;
+
+    /**
+     * Update legacy record from local object.
+     */
+    public function update(TransformerEvent $event): void;
+
+    /**
+     * Delete legacy record from local object.
+     */
+    public function delete(TransformerEvent $event): void;
 }

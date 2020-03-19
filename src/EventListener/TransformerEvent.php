@@ -20,13 +20,31 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace CoopTilleuls\MigrationBundle\Tests\TestBundle;
+namespace CoopTilleuls\MigrationBundle\EventListener;
 
-use Symfony\Component\HttpKernel\Bundle\Bundle;
+use Doctrine\Bundle\DoctrineBundle\Registry;
 
 /**
  * @author Vincent Chalamon <vincent@les-tilleuls.coop>
  */
-final class TestBundle extends Bundle
+class TransformerEvent
 {
+    private $object;
+    private $registry;
+
+    public function __construct(object $object, Registry $registry)
+    {
+        $this->object = $object;
+        $this->registry = $registry;
+    }
+
+    public function getObject(): object
+    {
+        return $this->object;
+    }
+
+    public function getRegistry(): Registry
+    {
+        return $this->registry;
+    }
 }

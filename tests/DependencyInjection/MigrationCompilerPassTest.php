@@ -1,6 +1,17 @@
 <?php
 
 /*
+ * This file is part of the MigrationBundle.
+ *
+ * (c) Vincent Chalamon <vincent@les-tilleuls.coop>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+declare(strict_types=1);
+
+/*
  * This file is part of the MigrationBundle package.
  *
  * (c) Vincent Chalamon <vincent@les-tilleuls.coop>
@@ -12,18 +23,17 @@
 namespace CoopTilleuls\MigrationBundle\Tests\Compiler;
 
 use CoopTilleuls\MigrationBundle\DependencyInjection\MigrationCompilerPass;
-use CoopTilleuls\MigrationBundle\Loader\LoaderInterface;
+use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
-use Symfony\Component\DependencyInjection\Reference;
 
 /**
  * @author Vincent Chalamon <vincent@les-tilleuls.coop>
  */
-class MigrationCompilerPassTest extends \PHPUnit_Framework_TestCase
+final class MigrationCompilerPassTest extends TestCase
 {
-    public function testProcess()
+    public function testProcess(): void
     {
         $containerMock = $this->prophesize(ContainerBuilder::class);
         $definitionMock = $this->prophesize(Definition::class);
@@ -47,7 +57,9 @@ class MigrationCompilerPassTest extends \PHPUnit_Framework_TestCase
 }
 
 class FooLoader
-{}
+{
+}
 
 class BarLoader
-{}
+{
+}

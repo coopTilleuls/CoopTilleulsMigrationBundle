@@ -1,6 +1,17 @@
 <?php
 
 /*
+ * This file is part of the MigrationBundle.
+ *
+ * (c) Vincent Chalamon <vincent@les-tilleuls.coop>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+declare(strict_types=1);
+
+/*
  * This file is part of the MigrationBundle package.
  *
  * (c) Vincent Chalamon <vincent@les-tilleuls.coop>
@@ -24,22 +35,38 @@ final class AppKernel extends Kernel
 {
     use MicroKernelTrait;
 
+    public function getCacheDir()
+    {
+        return __DIR__.'/cache/'.$this->getEnvironment();
+    }
+
+    public function getLogDir()
+    {
+        return __DIR__.'/logs/'.$this->getEnvironment();
+    }
+
+    public function getProjectDir()
+    {
+        return __DIR__;
+    }
+
     public function registerBundles()
     {
         return [
             new Symfony\Bundle\FrameworkBundle\FrameworkBundle(),
             new Doctrine\Bundle\DoctrineBundle\DoctrineBundle(),
+            new FriendsOfBehat\SymfonyExtension\Bundle\FriendsOfBehatSymfonyExtensionBundle(),
             new CoopTilleuls\MigrationBundle\CoopTilleulsMigrationBundle(),
             new CoopTilleuls\MigrationBundle\Tests\TestBundle\TestBundle(),
             new CoopTilleuls\MigrationBundle\Tests\LegacyBundle\LegacyBundle(),
         ];
     }
 
-    protected function configureRoutes(RouteCollectionBuilder $routes)
+    protected function configureRoutes(RouteCollectionBuilder $routes): void
     {
     }
 
-    protected function configureContainer(ContainerBuilder $c, LoaderInterface $loader)
+    protected function configureContainer(ContainerBuilder $c, LoaderInterface $loader): void
     {
         $c->loadFromExtension('coop_tilleuls_migration', [
             'legacy_connection_name' => 'legacy',

@@ -20,13 +20,15 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace CoopTilleuls\MigrationBundle\Tests\TestBundle;
-
-use Symfony\Component\HttpKernel\Bundle\Bundle;
+namespace CoopTilleuls\MigrationBundle\Exception;
 
 /**
  * @author Vincent Chalamon <vincent@les-tilleuls.coop>
  */
-final class TestBundle extends Bundle
+final class LoaderNotFoundException extends \RuntimeException
 {
+    public function __construct($loader)
+    {
+        parent::__construct(sprintf('Cannot find loader "%s".', $loader));
+    }
 }

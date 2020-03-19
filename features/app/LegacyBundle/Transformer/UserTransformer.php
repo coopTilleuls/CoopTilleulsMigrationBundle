@@ -1,6 +1,17 @@
 <?php
 
 /*
+ * This file is part of the MigrationBundle.
+ *
+ * (c) Vincent Chalamon <vincent@les-tilleuls.coop>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+declare(strict_types=1);
+
+/*
  * This file is part of the MigrationBundle package.
  *
  * (c) Vincent Chalamon <vincent@les-tilleuls.coop>
@@ -13,7 +24,6 @@ namespace CoopTilleuls\MigrationBundle\Tests\LegacyBundle\Transformer;
 
 use CoopTilleuls\MigrationBundle\EventListener\TransformerEvent;
 use CoopTilleuls\MigrationBundle\Tests\LegacyBundle\Entity\User as LegacyUser;
-use CoopTilleuls\MigrationBundle\Tests\TestBundle\Entity\User;
 use CoopTilleuls\MigrationBundle\Transformer\TransformerInterface;
 
 /**
@@ -24,7 +34,7 @@ final class UserTransformer implements TransformerInterface
     /**
      * {@inheritdoc}
      */
-    public function create(TransformerEvent $event)
+    public function create(TransformerEvent $event): void
     {
         $legacyUser = new LegacyUser();
         $legacyUser->setLogin($event->getObject()->getUsername());
@@ -39,7 +49,7 @@ final class UserTransformer implements TransformerInterface
     /**
      * {@inheritdoc}
      */
-    public function update(TransformerEvent $event)
+    public function update(TransformerEvent $event): void
     {
         $legacyEm = $event->getRegistry()->getManagerForClass(LegacyUser::class);
         $legacyUser = $legacyEm->getRepository(LegacyUser::class)->find($event->getObject()->getLegacyId());
@@ -57,7 +67,7 @@ final class UserTransformer implements TransformerInterface
     /**
      * {@inheritdoc}
      */
-    public function delete(TransformerEvent $event)
+    public function delete(TransformerEvent $event): void
     {
         $legacyEm = $event->getRegistry()->getManagerForClass(LegacyUser::class);
         $legacyUser = $legacyEm->getRepository(LegacyUser::class)->find($event->getObject()->getLegacyId());
@@ -67,13 +77,5 @@ final class UserTransformer implements TransformerInterface
 
         $legacyEm->remove($legacyUser);
         $legacyEm->flush();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function supports(TransformerEvent $event)
-    {
-        return $event->getObject() instanceof User;
     }
 }

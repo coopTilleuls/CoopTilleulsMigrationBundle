@@ -5,4 +5,21 @@ services:
         public: false
 
     CoopTilleuls\MigrationBundle\Tests\LegacyBundle\:
-        resource: '%kernel.root_dir%/LegacyBundle/{Loader,Transformer}'
+        resource: '%kernel.project_dir%/LegacyBundle/{Loader,Transformer}'
+        bind:
+            $registry: '@doctrine'
+
+    FeatureContext:
+        class: FeatureContext
+        public: true
+        arguments: ['@doctrine']
+
+    LoaderContext:
+        class: LoaderContext
+        public: true
+        arguments: ['@doctrine', '@coop_tilleuls_migration.command.load']
+
+    TransformerContext:
+        class: TransformerContext
+        public: true
+        arguments: ['@doctrine']

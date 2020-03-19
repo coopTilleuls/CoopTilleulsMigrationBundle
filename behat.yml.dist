@@ -1,0 +1,15 @@
+default:
+    suites:
+        default:
+            contexts:
+                - FeatureContext
+                - LoaderContext
+                - TransformerContext
+    extensions:
+        FriendsOfBehat\SymfonyExtension:
+            bootstrap: features/app/bootstrap.php
+            kernel:
+                environment: test
+                debug: true
+                path: features/app/AppKernel.php
+                class: AppKernel
