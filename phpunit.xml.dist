@@ -4,11 +4,7 @@
          xsi:noNamespaceSchemaLocation="http://schema.phpunit.de/4.6/phpunit.xsd"
          backupGlobals="false"
          colors="true"
-         bootstrap="features/app/bootstrap.php"
-         beStrictAboutTestsThatDoNotTestAnything="true"
-         checkForUnintentionallyCoveredCode="true"
-         beStrictAboutOutputDuringTests="true"
-         beStrictAboutTestSize="true">
+         bootstrap="features/app/bootstrap.php">
 
     <testsuites>
         <testsuite name="CoopTilleulsMigrationBundle tests suite">
@@ -18,7 +14,7 @@
 
     <filter>
         <whitelist>
-            <directory>.</directory>
+            <directory>src</directory>
             <exclude>
                 <directory>tests</directory>
                 <directory>features</directory>

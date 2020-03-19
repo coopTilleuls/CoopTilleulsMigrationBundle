@@ -20,13 +20,20 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace CoopTilleuls\MigrationBundle\Tests\TestBundle;
-
-use Symfony\Component\HttpKernel\Bundle\Bundle;
+namespace CoopTilleuls\MigrationBundle\Loader;
 
 /**
  * @author Vincent Chalamon <vincent@les-tilleuls.coop>
  */
-final class TestBundle extends Bundle
+interface LoaderInterface
 {
+    /**
+     * Execute loader.
+     */
+    public function execute(): void;
+
+    /**
+     * Get the number of rows imported.
+     */
+    public function getNbRows(): int;
 }

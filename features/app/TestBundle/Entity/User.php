@@ -1,6 +1,17 @@
 <?php
 
 /*
+ * This file is part of the MigrationBundle.
+ *
+ * (c) Vincent Chalamon <vincent@les-tilleuls.coop>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+declare(strict_types=1);
+
+/*
  * This file is part of the MigrationBundle package.
  *
  * (c) Vincent Chalamon <vincent@les-tilleuls.coop>
@@ -72,14 +83,11 @@ final class User
     /**
      * @param string $username
      */
-    public function setUsername($username)
+    public function setUsername($username): void
     {
         $this->username = $username;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPassword()
     {
         return $this->password;
@@ -88,7 +96,7 @@ final class User
     /**
      * @param string $password
      */
-    public function setPassword($password)
+    public function setPassword($password): void
     {
         $this->password = $password;
     }
@@ -104,7 +112,7 @@ final class User
     /**
      * @param int $legacyId
      */
-    public function setLegacyId($legacyId)
+    public function setLegacyId($legacyId): void
     {
         $this->legacyId = $legacyId;
     }

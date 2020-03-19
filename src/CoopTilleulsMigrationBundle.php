@@ -20,27 +20,23 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace CoopTilleuls\MigrationBundle\Tests\LegacyBundle\Loader;
+namespace CoopTilleuls\MigrationBundle;
 
-use CoopTilleuls\MigrationBundle\Loader\LoaderInterface;
+use CoopTilleuls\MigrationBundle\DependencyInjection\MigrationCompilerPass;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 /**
  * @author Vincent Chalamon <vincent@les-tilleuls.coop>
  */
-final class FooLoader implements LoaderInterface
+final class CoopTilleulsMigrationBundle extends Bundle
 {
     /**
      * {@inheritdoc}
      */
-    public function execute(): void
+    public function build(ContainerBuilder $container): void
     {
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getNbRows(): int
-    {
-        return 3;
+        $container->addCompilerPass(new MigrationCompilerPass('coop_tilleuls_migration.loader', 'coop_tilleuls_migration.loader.locator', true));
+        $container->addCompilerPass(new MigrationCompilerPass('coop_tilleuls_migration.transformer', 'coop_tilleuls_migration.transformer.locator'));
     }
 }

@@ -1,6 +1,17 @@
 <?php
 
 /*
+ * This file is part of the MigrationBundle.
+ *
+ * (c) Vincent Chalamon <vincent@les-tilleuls.coop>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+declare(strict_types=1);
+
+/*
  * This file is part of the MigrationBundle package.
  *
  * (c) Vincent Chalamon <vincent@les-tilleuls.coop>
@@ -69,7 +80,7 @@ final class User
     /**
      * @param string $login
      */
-    public function setLogin($login)
+    public function setLogin($login): void
     {
         $this->login = $login;
     }
@@ -85,7 +96,7 @@ final class User
     /**
      * @param string $pswd
      */
-    public function setPswd($pswd)
+    public function setPswd($pswd): void
     {
         $this->pswd = $pswd;
     }
@@ -101,7 +112,7 @@ final class User
     /**
      * @param bool $deleted
      */
-    public function setDeleted($deleted)
+    public function setDeleted($deleted): void
     {
         $this->deleted = $deleted;
     }

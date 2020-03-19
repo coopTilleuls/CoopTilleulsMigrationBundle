@@ -1,6 +1,17 @@
 <?php
 
 /*
+ * This file is part of the MigrationBundle.
+ *
+ * (c) Vincent Chalamon <vincent@les-tilleuls.coop>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+declare(strict_types=1);
+
+/*
  * This file is part of the MigrationBundle package.
  *
  * (c) Vincent Chalamon <vincent@les-tilleuls.coop>
@@ -13,6 +24,7 @@ use Behat\Behat\Context\Context;
 use CoopTilleuls\MigrationBundle\Tests\LegacyBundle\Entity\User as LegacyUser;
 use CoopTilleuls\MigrationBundle\Tests\TestBundle\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Registry;
+use PHPUnit\Framework\Assert;
 
 /**
  * @author Vincent Chalamon <vincent@les-tilleuls.coop>
@@ -29,7 +41,7 @@ final class TransformerContext implements Context
     /**
      * @When I create a user
      */
-    public function iCreateAUser()
+    public function iCreateAUser(): void
     {
         $user = new User();
         $user->setUsername('admin');
@@ -46,22 +58,22 @@ final class TransformerContext implements Context
     /**
      * @Then user must be created in legacy database
      */
-    public function userMustBeCreatedInLegacyDatabase()
+    public function userMustBeCreatedInLegacyDatabase(): void
     {
         $user = $this->doctrine->getManagerForClass(User::class)->getRepository(User::class)->find(1);
-        \PHPUnit_Framework_Assert::assertNotNull($user, 'Cannot retrieve user with id 1');
-        \PHPUnit_Framework_Assert::assertNotNull($user->getLegacyId(), 'User does not have legacyId property filled');
+        Assert::assertNotNull($user, 'Cannot retrieve user with id 1');
+        Assert::assertNotNull($user->getLegacyId(), 'User does not have legacyId property filled');
 
         $legacyUser = $this->doctrine->getManagerForClass(LegacyUser::class)->getRepository(LegacyUser::class)->find($user->getLegacyId());
-        \PHPUnit_Framework_Assert::assertNotNull($legacyUser, 'Cannot retrieve legacy user with id '.$user->getLegacyId());
-        \PHPUnit_Framework_Assert::assertEquals('admin', $legacyUser->getLogin());
-        \PHPUnit_Framework_Assert::assertEquals(sha1('password'), $legacyUser->getPswd());
+        Assert::assertNotNull($legacyUser, 'Cannot retrieve legacy user with id '.$user->getLegacyId());
+        Assert::assertEquals('admin', $legacyUser->getLogin());
+        Assert::assertEquals(sha1('password'), $legacyUser->getPswd());
     }
 
     /**
      * @When I update a user
      */
-    public function iUpdateAUser()
+    public function iUpdateAUser(): void
     {
         $this->iCreateAUser();
 
@@ -80,24 +92,24 @@ final class TransformerContext implements Context
     /**
      * @Then user must be updated in legacy database
      */
-    public function userMustBeUpdatedInLegacyDatabase()
+    public function userMustBeUpdatedInLegacyDatabase(): void
     {
         $user = $this->doctrine->getManagerForClass(User::class)->getRepository(User::class)->find(1);
-        \PHPUnit_Framework_Assert::assertNotNull($user, 'Cannot retrieve user with id 1');
-        \PHPUnit_Framework_Assert::assertNotNull($user->getLegacyId(), 'User does not have legacyId property filled');
-        \PHPUnit_Framework_Assert::assertEquals('foo', $user->getUsername());
-        \PHPUnit_Framework_Assert::assertEquals(sha1('bar'), $user->getPassword());
+        Assert::assertNotNull($user, 'Cannot retrieve user with id 1');
+        Assert::assertNotNull($user->getLegacyId(), 'User does not have legacyId property filled');
+        Assert::assertEquals('foo', $user->getUsername());
+        Assert::assertEquals(sha1('bar'), $user->getPassword());
 
         $legacyUser = $this->doctrine->getManagerForClass(LegacyUser::class)->getRepository(LegacyUser::class)->find($user->getLegacyId());
-        \PHPUnit_Framework_Assert::assertNotNull($legacyUser, 'Cannot retrieve legacy user with id '.$user->getLegacyId());
-        \PHPUnit_Framework_Assert::assertEquals('foo', $legacyUser->getLogin());
-        \PHPUnit_Framework_Assert::assertEquals(sha1('bar'), $legacyUser->getPswd());
+        Assert::assertNotNull($legacyUser, 'Cannot retrieve legacy user with id '.$user->getLegacyId());
+        Assert::assertEquals('foo', $legacyUser->getLogin());
+        Assert::assertEquals(sha1('bar'), $legacyUser->getPswd());
     }
 
     /**
      * @When I delete a user
      */
-    public function iDeleteAUser()
+    public function iDeleteAUser(): void
     {
         $this->iCreateAUser();
 
@@ -113,11 +125,11 @@ final class TransformerContext implements Context
     /**
      * @Then user must be deleted from legacy database
      */
-    public function userMustBeDeletedFromLegacyDatabase()
+    public function userMustBeDeletedFromLegacyDatabase(): void
     {
         $user = $this->doctrine->getManagerForClass(User::class)->getRepository(User::class)->find(1);
-        \PHPUnit_Framework_Assert::assertNull($user, 'User has not been removed from database');
+        Assert::assertNull($user, 'User has not been removed from database');
         $legacyUser = $this->doctrine->getManagerForClass(LegacyUser::class)->getRepository(LegacyUser::class)->find(1);
-        \PHPUnit_Framework_Assert::assertNull($legacyUser, 'Legacy user has not been removed from database');
+        Assert::assertNull($legacyUser, 'Legacy user has not been removed from database');
     }
 }

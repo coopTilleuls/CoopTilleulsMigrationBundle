@@ -1,6 +1,17 @@
 <?php
 
 /*
+ * This file is part of the MigrationBundle.
+ *
+ * (c) Vincent Chalamon <vincent@les-tilleuls.coop>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+declare(strict_types=1);
+
+/*
  * This file is part of the MigrationBundle package.
  *
  * (c) Vincent Chalamon <vincent@les-tilleuls.coop>
@@ -12,7 +23,9 @@
 namespace CoopTilleuls\MigrationBundle\tests\Command;
 
 use CoopTilleuls\MigrationBundle\Command\MigrationLoadCommand;
+use CoopTilleuls\MigrationBundle\Exception\LoaderNotFoundException;
 use CoopTilleuls\MigrationBundle\Loader\LoaderInterface;
+use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Input\InputInterface;
@@ -22,7 +35,7 @@ use Symfony\Component\Console\Style\StyleInterface;
 /**
  * @author Vincent Chalamon <vincent@les-tilleuls.coop>
  */
-class MigrationLoadCommandTest extends \PHPUnit_Framework_TestCase
+final class MigrationLoadCommandTest extends TestCase
 {
     private $command;
     private $locatorMock;
@@ -32,7 +45,7 @@ class MigrationLoadCommandTest extends \PHPUnit_Framework_TestCase
     private $styleMock;
     private $reflection;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->locatorMock = $this->prophesize(ContainerInterface::class);
         $this->styleMock = $this->prophesize(StyleInterface::class);
@@ -48,7 +61,7 @@ class MigrationLoadCommandTest extends \PHPUnit_Framework_TestCase
         $this->inputMock->getArgument('loader')->willReturn('user')->shouldBeCalledTimes(1);
     }
 
-    public function testExecute()
+    public function testExecute(): void
     {
         $this->locatorMock->has('user')->willReturn(true)->shouldBeCalledTimes(1);
         $this->locatorMock->get('user')->willReturn($this->loaderMock)->shouldBeCalledTimes(1);
@@ -62,19 +75,18 @@ class MigrationLoadCommandTest extends \PHPUnit_Framework_TestCase
         $this->reflection->invoke($this->command, $this->inputMock->reveal(), $this->outputMock->reveal());
     }
 
-    /**
-     * @expectedException \CoopTilleuls\MigrationBundle\Exception\LoaderNotFoundException
-     * @expectedExceptionMessage Cannot find loader "user".
-     */
-    public function testExecuteNoLoader()
+    public function testExecuteNoLoader(): void
     {
+        $this->expectException(LoaderNotFoundException::class);
+        $this->expectExceptionMessage('Cannot find loader "user".');
+
         $this->locatorMock->has('user')->willReturn(false)->shouldBeCalledTimes(1);
         $this->locatorMock->get(Argument::any())->shouldNotBeCalled();
 
         $this->reflection->invoke($this->command, $this->inputMock->reveal(), $this->outputMock->reveal());
     }
 
-    public function testExecuteNoData()
+    public function testExecuteNoData(): void
     {
         $this->locatorMock->has('user')->willReturn(true)->shouldBeCalledTimes(1);
         $this->locatorMock->get('user')->willReturn($this->loaderMock)->shouldBeCalledTimes(1);

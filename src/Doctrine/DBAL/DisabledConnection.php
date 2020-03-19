@@ -20,27 +20,49 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace CoopTilleuls\MigrationBundle\Tests\LegacyBundle\Loader;
+namespace CoopTilleuls\MigrationBundle\Doctrine\DBAL;
 
-use CoopTilleuls\MigrationBundle\Loader\LoaderInterface;
+use Doctrine\DBAL\Connection;
 
 /**
  * @author Vincent Chalamon <vincent@les-tilleuls.coop>
  */
-final class FooLoader implements LoaderInterface
+class DisabledConnection extends Connection
 {
+    private $enabled = true;
+
     /**
-     * {@inheritdoc}
+     * Disable commit.
      */
-    public function execute(): void
+    public function disable(): void
     {
+        $this->enabled = false;
+    }
+
+    /**
+     * Enable commit.
+     */
+    public function enable(): void
+    {
+        $this->enabled = true;
     }
 
     /**
      * {@inheritdoc}
+     *
+     * @return void|bool
      */
-    public function getNbRows(): int
+    public function commit()
     {
-        return 3;
+        if (!$this->isEnabled()) {
+            return;
+        }
+
+        return parent::commit();
+    }
+
+    public function isEnabled(): bool
+    {
+        return $this->enabled;
     }
 }

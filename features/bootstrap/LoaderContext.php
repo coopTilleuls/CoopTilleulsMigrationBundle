@@ -1,6 +1,17 @@
 <?php
 
 /*
+ * This file is part of the MigrationBundle.
+ *
+ * (c) Vincent Chalamon <vincent@les-tilleuls.coop>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+declare(strict_types=1);
+
+/*
  * This file is part of the MigrationBundle package.
  *
  * (c) Vincent Chalamon <vincent@les-tilleuls.coop>
@@ -14,10 +25,7 @@ use CoopTilleuls\MigrationBundle\Command\MigrationLoadCommand;
 use CoopTilleuls\MigrationBundle\Tests\LegacyBundle\Entity\User as LegacyUser;
 use CoopTilleuls\MigrationBundle\Tests\TestBundle\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Registry;
-use Doctrine\Common\DataFixtures\Purger\ORMPurger;
-use Doctrine\DBAL\DBALException;
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Tools\SchemaTool;
+use PHPUnit\Framework\Assert;
 use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 
@@ -39,27 +47,9 @@ final class LoaderContext implements Context
     }
 
     /**
-     * @BeforeScenario
-     */
-    public function resetDatabase()
-    {
-        foreach ($this->doctrine->getManagers() as $manager) {
-            /** @var EntityManagerInterface $manager */
-            $purger = new ORMPurger($manager);
-            $purger->setPurgeMode(ORMPurger::PURGE_MODE_TRUNCATE);
-            try {
-                $purger->purge();
-            } catch (DBALException $e) {
-                $schemaTool = new SchemaTool($manager);
-                $schemaTool->createSchema($manager->getMetadataFactory()->getAllMetadata());
-            }
-        }
-    }
-
-    /**
      * @When I execute user loader
      */
-    public function iExecuteUserLoader()
+    public function iExecuteUserLoader(): void
     {
         $em = $this->doctrine->getManagerForClass(LegacyUser::class);
         foreach (['admin' => 'password', 'foo' => 'bar', 'john' => 'doe'] as $login => $pswd) {
@@ -80,32 +70,32 @@ final class LoaderContext implements Context
     /**
      * @Then users must be imported
      */
-    public function usersMustBeImported()
+    public function usersMustBeImported(): void
     {
         $content = trim(preg_replace('/[ \/]{2,}/', '', $this->output->fetch()));
-        \PHPUnit_Framework_Assert::assertEquals(0, $this->statusCode, sprintf("An error occurred on command:\n%s", $content));
-        \PHPUnit_Framework_Assert::assertContains('Loading data from loader "user"', $content);
-        \PHPUnit_Framework_Assert::assertContains('2 record(s) successfully loaded', $content);
-        \PHPUnit_Framework_Assert::assertContains('[OK] Loader "user" successfully executed', $content);
+        Assert::assertEquals(0, $this->statusCode, sprintf("An error occurred on command:\n%s", $content));
+        Assert::assertContains('Loading data from loader "user"', $content);
+        Assert::assertContains('2 record(s) successfully loaded', $content);
+        Assert::assertContains('[OK] Loader "user" successfully executed', $content);
 
         $em = $this->doctrine->getManagerForClass(User::class);
         $users = $em->getRepository(User::class)->findAll();
 
-        \PHPUnit_Framework_Assert::assertEquals(1, $users[0]->getId());
-        \PHPUnit_Framework_Assert::assertEquals(1, $users[0]->getLegacyId());
-        \PHPUnit_Framework_Assert::assertEquals('admin', $users[0]->getUsername());
-        \PHPUnit_Framework_Assert::assertEquals(sha1('password'), $users[0]->getPassword());
+        Assert::assertEquals(1, $users[0]->getId());
+        Assert::assertEquals(1, $users[0]->getLegacyId());
+        Assert::assertEquals('admin', $users[0]->getUsername());
+        Assert::assertEquals(sha1('password'), $users[0]->getPassword());
 
-        \PHPUnit_Framework_Assert::assertEquals(2, $users[1]->getId());
-        \PHPUnit_Framework_Assert::assertEquals(3, $users[1]->getLegacyId());
-        \PHPUnit_Framework_Assert::assertEquals('john', $users[1]->getUsername());
-        \PHPUnit_Framework_Assert::assertEquals(sha1('doe'), $users[1]->getPassword());
+        Assert::assertEquals(2, $users[1]->getId());
+        Assert::assertEquals(3, $users[1]->getLegacyId());
+        Assert::assertEquals('john', $users[1]->getUsername());
+        Assert::assertEquals(sha1('doe'), $users[1]->getPassword());
     }
 
     /**
      * @When I execute user loader without data
      */
-    public function iExecuteUserLoaderWithoutData()
+    public function iExecuteUserLoaderWithoutData(): void
     {
         $this->statusCode = $this->command->run(new StringInput('user'), $this->output);
     }
@@ -113,22 +103,22 @@ final class LoaderContext implements Context
     /**
      * @Then no users must be imported
      */
-    public function noUsersMustBeImported()
+    public function noUsersMustBeImported(): void
     {
         $content = trim(preg_replace('/[ \/]{2,}/', '', $this->output->fetch()));
-        \PHPUnit_Framework_Assert::assertEquals(0, $this->statusCode);
-        \PHPUnit_Framework_Assert::assertContains('Loading data from loader "user"', $content);
-        \PHPUnit_Framework_Assert::assertContains('No data loaded', $content);
-        \PHPUnit_Framework_Assert::assertContains('[OK] Loader "user" successfully executed', $content);
+        Assert::assertEquals(0, $this->statusCode);
+        Assert::assertContains('Loading data from loader "user"', $content);
+        Assert::assertContains('No data loaded', $content);
+        Assert::assertContains('[OK] Loader "user" successfully executed', $content);
 
         $em = $this->doctrine->getManagerForClass(User::class);
-        \PHPUnit_Framework_Assert::assertCount(0, $em->getRepository(User::class)->findAll());
+        Assert::assertCount(0, $em->getRepository(User::class)->findAll());
     }
 
     /**
      * @When I execute foo loader by its class name
      */
-    public function iExecuteFooLoaderByItsClassName()
+    public function iExecuteFooLoaderByItsClassName(): void
     {
         $this->statusCode = $this->command->run(new StringInput('CoopTilleuls\\\MigrationBundle\\\Tests\\\LegacyBundle\\\Loader\\\FooLoader'), $this->output);
     }
@@ -136,7 +126,7 @@ final class LoaderContext implements Context
     /**
      * @When I execute foo loader by its alias
      */
-    public function iExecuteFooLoaderByItsAlias()
+    public function iExecuteFooLoaderByItsAlias(): void
     {
         $this->statusCode = $this->command->run(new StringInput('foo'), $this->output);
     }
@@ -144,12 +134,12 @@ final class LoaderContext implements Context
     /**
      * @Then foo loader must have been executed
      */
-    public function fooLoaderMustHaveBeenExecuted()
+    public function fooLoaderMustHaveBeenExecuted(): void
     {
         $content = trim(preg_replace('/[ \/]{2,}/', '', $this->output->fetch()));
-        \PHPUnit_Framework_Assert::assertEquals(0, $this->statusCode);
-        \PHPUnit_Framework_Assert::assertContains('Loading data from loader', $content);
-        \PHPUnit_Framework_Assert::assertContains('3 record(s) successfully loaded', $content);
-        \PHPUnit_Framework_Assert::assertContains('successfully executed', $content);
+        Assert::assertEquals(0, $this->statusCode);
+        Assert::assertContains('Loading data from loader', $content);
+        Assert::assertContains('3 record(s) successfully loaded', $content);
+        Assert::assertContains('successfully executed', $content);
     }
 }
