@@ -11,15 +11,6 @@
 
 declare(strict_types=1);
 
-/*
- * This file is part of the MigrationBundle package.
- *
- * (c) Vincent Chalamon <vincent@les-tilleuls.coop>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 use Behat\Behat\Context\Context;
 use CoopTilleuls\MigrationBundle\Command\MigrationLoadCommand;
 use CoopTilleuls\MigrationBundle\Tests\LegacyBundle\Entity\User as LegacyUser;

@@ -11,15 +11,6 @@
 
 declare(strict_types=1);
 
-/*
- * This file is part of the MigrationBundle package.
- *
- * (c) Vincent Chalamon <vincent@les-tilleuls.coop>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 namespace CoopTilleuls\MigrationBundle\EventListener;
 
 use CoopTilleuls\MigrationBundle\Annotation\Transformer;
@@ -27,7 +18,6 @@ use CoopTilleuls\MigrationBundle\Doctrine\DBAL\DisabledConnection;
 use CoopTilleuls\MigrationBundle\Transformer\TransformerInterface;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\Common\Annotations\Reader;
-use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\UnitOfWork;
@@ -65,21 +55,30 @@ final class TransformerEventListener
         $this->legacyConnection->disable();
     }
 
-    public function prePersist(LifecycleEventArgs $event): void
+    /**
+     * @param \Doctrine\Common\Persistence\Event\LifecycleEventArgs|\Doctrine\ORM\Event\LifecycleEventArgs $event
+     */
+    public function prePersist($event): void
     {
         if ($this->hasTransformer($event->getObject())) {
             $this->events['create'][] = $event;
         }
     }
 
-    public function preUpdate(LifecycleEventArgs $event): void
+    /**
+     * @param \Doctrine\Common\Persistence\Event\LifecycleEventArgs|\Doctrine\ORM\Event\LifecycleEventArgs $event
+     */
+    public function preUpdate($event): void
     {
         if ($this->hasTransformer($event->getObject())) {
             $this->events['update'][] = $event;
         }
     }
 
-    public function preRemove(LifecycleEventArgs $event): void
+    /**
+     * @param \Doctrine\Common\Persistence\Event\LifecycleEventArgs|\Doctrine\ORM\Event\LifecycleEventArgs $event
+     */
+    public function preRemove($event): void
     {
         if ($this->hasTransformer($event->getObject())) {
             $this->events['delete'][] = $event;
@@ -112,7 +111,6 @@ final class TransformerEventListener
     private function process(): void
     {
         foreach ($this->events as $action => $events) {
-            /* @var LifecycleEventArgs[] $events */
             foreach ($events as $event) {
                 /** @var EntityManagerInterface $em */
                 $em = $event->getObjectManager();

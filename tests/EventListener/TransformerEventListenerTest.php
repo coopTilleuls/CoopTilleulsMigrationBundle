@@ -11,15 +11,6 @@
 
 declare(strict_types=1);
 
-/*
- * This file is part of the MigrationBundle package.
- *
- * (c) Vincent Chalamon <vincent@les-tilleuls.coop>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 namespace CoopTilleuls\MigrationBundle\tests\EventListener;
 
 use CoopTilleuls\MigrationBundle\Annotation\Transformer;
@@ -29,7 +20,6 @@ use CoopTilleuls\MigrationBundle\EventListener\TransformerEventListener;
 use CoopTilleuls\MigrationBundle\Transformer\TransformerInterface;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\Common\Annotations\Reader;
-use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\UnitOfWork;
@@ -79,7 +69,7 @@ final class TransformerEventListenerTest extends TestCase
     private $annotationMock;
 
     /**
-     * @var ObjectProphecy|LifecycleEventArgs
+     * @var ObjectProphecy|\Doctrine\Common\Persistence\Event\LifecycleEventArgs|\Doctrine\Persistence\Event\LifecycleEventArgs
      */
     private $eventMock;
 
@@ -101,7 +91,11 @@ final class TransformerEventListenerTest extends TestCase
         $this->readerMock = $this->prophesize(Reader::class);
         $this->connectionMock = $this->prophesize(DisabledConnection::class);
         $this->annotationMock = $this->prophesize(Transformer::class);
-        $this->eventMock = $this->prophesize(LifecycleEventArgs::class);
+        if (class_exists(\Doctrine\Common\Persistence\Event\LifecycleEventArgs::class)) {
+            $this->eventMock = $this->prophesize(\Doctrine\Common\Persistence\Event\LifecycleEventArgs::class);
+        } else {
+            $this->eventMock = $this->prophesize(\Doctrine\Persistence\Event\LifecycleEventArgs::class);
+        }
         $this->objectMock = $this->prophesize(\stdClass::class);
 
         $this->registryMock->getConnection('legacy')->willReturn($this->connectionMock)->shouldBeCalledTimes(1);
