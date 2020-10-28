@@ -15,6 +15,7 @@ namespace CoopTilleuls\MigrationBundle\DependencyInjection;
 
 use CoopTilleuls\MigrationBundle\Loader\AbstractLoader;
 use Doctrine\Common\Inflector\Inflector;
+use Doctrine\Inflector\InflectorFactory;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
@@ -52,7 +53,8 @@ final class MigrationCompilerPass implements CompilerPassInterface
             }
 
             // Generate aliases
-            $alias = Inflector::tableize(preg_replace('/^(.*)Loader$/i', '$1', $reflection->getShortName()));
+            $alias = (class_exists(InflectorFactory::class) ? InflectorFactory::create()->build() : new Inflector())
+                ->tableize(preg_replace('/^(.*)Loader$/i', '$1', $reflection->getShortName()));
             $aliases = [$class, $alias, str_replace('_', '-', $alias)];
             if (true === $this->allowAlias && isset($attributes[0]['alias'])) {
                 $aliases[] = $attributes[0]['alias'];

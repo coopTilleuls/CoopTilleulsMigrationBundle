@@ -55,9 +55,6 @@ final class TransformerEventListener
         $this->legacyConnection->disable();
     }
 
-    /**
-     * @param \Doctrine\Common\Persistence\Event\LifecycleEventArgs|\Doctrine\ORM\Event\LifecycleEventArgs $event
-     */
     public function prePersist($event): void
     {
         if ($this->hasTransformer($event->getObject())) {
@@ -65,9 +62,6 @@ final class TransformerEventListener
         }
     }
 
-    /**
-     * @param \Doctrine\Common\Persistence\Event\LifecycleEventArgs|\Doctrine\ORM\Event\LifecycleEventArgs $event
-     */
     public function preUpdate($event): void
     {
         if ($this->hasTransformer($event->getObject())) {
@@ -75,9 +69,6 @@ final class TransformerEventListener
         }
     }
 
-    /**
-     * @param \Doctrine\Common\Persistence\Event\LifecycleEventArgs|\Doctrine\ORM\Event\LifecycleEventArgs $event
-     */
     public function preRemove($event): void
     {
         if ($this->hasTransformer($event->getObject())) {
