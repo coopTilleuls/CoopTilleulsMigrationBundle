@@ -11,11 +11,12 @@
 
 declare(strict_types=1);
 
-namespace CoopTilleuls\MigrationBundle\tests\Command;
+namespace CoopTilleuls\MigrationBundle\Tests\Command;
 
 use CoopTilleuls\MigrationBundle\Command\MigrationLoadCommand;
 use CoopTilleuls\MigrationBundle\Exception\LoaderNotFoundException;
 use CoopTilleuls\MigrationBundle\Loader\LoaderInterface;
+use CoopTilleuls\MigrationBundle\Tests\ProphecyTrait;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Psr\Container\ContainerInterface;
@@ -28,6 +29,8 @@ use Symfony\Component\Console\Style\StyleInterface;
  */
 final class MigrationLoadCommandTest extends TestCase
 {
+    use ProphecyTrait;
+
     private $command;
     private $locatorMock;
     private $inputMock;

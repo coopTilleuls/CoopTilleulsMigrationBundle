@@ -12,8 +12,8 @@
 declare(strict_types=1);
 
 use Behat\Behat\Context\Context;
-use CoopTilleuls\MigrationBundle\Tests\LegacyBundle\Entity\User as LegacyUser;
-use CoopTilleuls\MigrationBundle\Tests\TestBundle\Entity\User;
+use CoopTilleuls\MigrationBundle\E2e\LegacyBundle\Entity\User as LegacyUser;
+use CoopTilleuls\MigrationBundle\E2e\TestBundle\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use PHPUnit\Framework\Assert;
 

@@ -20,7 +20,7 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace CoopTilleuls\MigrationBundle\Tests\LegacyBundle\Loader;
+namespace CoopTilleuls\MigrationBundle\E2e\LegacyBundle\Loader;
 
 use CoopTilleuls\MigrationBundle\Loader\AbstractLoader;
 use Doctrine\Bundle\DoctrineBundle\Registry;

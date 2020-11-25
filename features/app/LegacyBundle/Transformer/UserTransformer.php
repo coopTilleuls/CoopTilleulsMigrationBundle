@@ -20,10 +20,10 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace CoopTilleuls\MigrationBundle\Tests\LegacyBundle\Transformer;
+namespace CoopTilleuls\MigrationBundle\E2e\LegacyBundle\Transformer;
 
 use CoopTilleuls\MigrationBundle\EventListener\TransformerEvent;
-use CoopTilleuls\MigrationBundle\Tests\LegacyBundle\Entity\User as LegacyUser;
+use CoopTilleuls\MigrationBundle\E2e\LegacyBundle\Entity\User as LegacyUser;
 use CoopTilleuls\MigrationBundle\Transformer\TransformerInterface;
 
 /**

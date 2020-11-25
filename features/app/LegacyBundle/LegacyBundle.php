@@ -20,7 +20,7 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace CoopTilleuls\MigrationBundle\Tests\LegacyBundle;
+namespace CoopTilleuls\MigrationBundle\E2e\LegacyBundle;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
