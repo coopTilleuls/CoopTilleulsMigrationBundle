@@ -11,9 +11,10 @@
 
 declare(strict_types=1);
 
-namespace CoopTilleuls\MigrationBundle\tests\Doctrine\DBAL;
+namespace CoopTilleuls\MigrationBundle\Tests\Doctrine\DBAL;
 
 use CoopTilleuls\MigrationBundle\Doctrine\DBAL\DisabledConnection;
+use CoopTilleuls\MigrationBundle\Tests\ProphecyTrait;
 use Doctrine\DBAL\ConnectionException;
 use Doctrine\DBAL\Driver;
 use PHPUnit\Framework\TestCase;
@@ -24,6 +25,8 @@ use Prophecy\Argument;
  */
 final class DisabledConnectionTest extends TestCase
 {
+    use ProphecyTrait;
+
     public function testDisable(): void
     {
         $driverMock = $this->prophesize(Driver::class);

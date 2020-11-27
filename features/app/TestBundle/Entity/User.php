@@ -20,7 +20,7 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace CoopTilleuls\MigrationBundle\Tests\TestBundle\Entity;
+namespace CoopTilleuls\MigrationBundle\E2e\TestBundle\Entity;
 
 use CoopTilleuls\MigrationBundle\Annotation\Transformer;
 use Doctrine\ORM\Mapping as ORM;
@@ -30,7 +30,7 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @author Vincent Chalamon <vincent@les-tilleuls.coop>
  *
- * @Transformer("CoopTilleuls\MigrationBundle\Tests\LegacyBundle\Transformer\UserTransformer")
+ * @Transformer("CoopTilleuls\MigrationBundle\E2e\LegacyBundle\Transformer\UserTransformer")
  */
 final class User
 {

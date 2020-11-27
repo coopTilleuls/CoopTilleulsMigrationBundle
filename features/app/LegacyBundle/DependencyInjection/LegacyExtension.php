@@ -20,7 +20,7 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace CoopTilleuls\MigrationBundle\Tests\LegacyBundle\DependencyInjection;
+namespace CoopTilleuls\MigrationBundle\E2e\LegacyBundle\DependencyInjection;
 
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;

@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace CoopTilleuls\MigrationBundle\Tests\Compiler;
 
 use CoopTilleuls\MigrationBundle\DependencyInjection\MigrationCompilerPass;
+use CoopTilleuls\MigrationBundle\Tests\ProphecyTrait;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -24,6 +25,8 @@ use Symfony\Component\DependencyInjection\Definition;
  */
 final class MigrationCompilerPassTest extends TestCase
 {
+    use ProphecyTrait;
+
     public function testProcess(): void
     {
         $containerMock = $this->prophesize(ContainerBuilder::class);

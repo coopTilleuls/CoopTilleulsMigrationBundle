@@ -11,12 +11,13 @@
 
 declare(strict_types=1);
 
-namespace CoopTilleuls\MigrationBundle\tests\EventListener;
+namespace CoopTilleuls\MigrationBundle\Tests\EventListener;
 
 use CoopTilleuls\MigrationBundle\Annotation\Transformer;
 use CoopTilleuls\MigrationBundle\Doctrine\DBAL\DisabledConnection;
 use CoopTilleuls\MigrationBundle\EventListener\TransformerEvent;
 use CoopTilleuls\MigrationBundle\EventListener\TransformerEventListener;
+use CoopTilleuls\MigrationBundle\Tests\ProphecyTrait;
 use CoopTilleuls\MigrationBundle\Transformer\TransformerInterface;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\Common\Annotations\Reader;
@@ -33,6 +34,8 @@ use Psr\Container\ContainerInterface;
  */
 final class TransformerEventListenerTest extends TestCase
 {
+    use ProphecyTrait;
+
     /**
      * @var TransformerEventListener
      */

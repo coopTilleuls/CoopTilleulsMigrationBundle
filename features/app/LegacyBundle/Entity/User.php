@@ -20,7 +20,7 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace CoopTilleuls\MigrationBundle\Tests\LegacyBundle\Entity;
+namespace CoopTilleuls\MigrationBundle\E2e\LegacyBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 

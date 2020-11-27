@@ -4,7 +4,7 @@ services:
         autoconfigure: true
         public: false
 
-    CoopTilleuls\MigrationBundle\Tests\LegacyBundle\:
+    CoopTilleuls\MigrationBundle\E2e\LegacyBundle\:
         resource: '%kernel.project_dir%/LegacyBundle/{Loader,Transformer}'
         bind:
             $registry: '@doctrine'

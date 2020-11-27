@@ -57,8 +57,8 @@ final class AppKernel extends Kernel
             new Doctrine\Bundle\DoctrineBundle\DoctrineBundle(),
             new FriendsOfBehat\SymfonyExtension\Bundle\FriendsOfBehatSymfonyExtensionBundle(),
             new CoopTilleuls\MigrationBundle\CoopTilleulsMigrationBundle(),
-            new CoopTilleuls\MigrationBundle\Tests\TestBundle\TestBundle(),
-            new CoopTilleuls\MigrationBundle\Tests\LegacyBundle\LegacyBundle(),
+            new CoopTilleuls\MigrationBundle\E2e\TestBundle\TestBundle(),
+            new CoopTilleuls\MigrationBundle\E2e\LegacyBundle\LegacyBundle(),
         ];
     }
 

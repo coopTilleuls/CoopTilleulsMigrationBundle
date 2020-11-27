@@ -13,8 +13,8 @@ declare(strict_types=1);
 
 use Behat\Behat\Context\Context;
 use CoopTilleuls\MigrationBundle\Command\MigrationLoadCommand;
-use CoopTilleuls\MigrationBundle\Tests\LegacyBundle\Entity\User as LegacyUser;
-use CoopTilleuls\MigrationBundle\Tests\TestBundle\Entity\User;
+use CoopTilleuls\MigrationBundle\E2e\LegacyBundle\Entity\User as LegacyUser;
+use CoopTilleuls\MigrationBundle\E2e\TestBundle\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use PHPUnit\Framework\Assert;
 use Symfony\Component\Console\Input\StringInput;
@@ -65,9 +65,9 @@ final class LoaderContext implements Context
     {
         $content = trim(preg_replace('/[ \/]{2,}/', '', $this->output->fetch()));
         Assert::assertEquals(0, $this->statusCode, sprintf("An error occurred on command:\n%s", $content));
-        Assert::assertContains('Loading data from loader "user"', $content);
-        Assert::assertContains('2 record(s) successfully loaded', $content);
-        Assert::assertContains('[OK] Loader "user" successfully executed', $content);
+        Assert::assertStringContainsString('Loading data from loader "user"', $content);
+        Assert::assertStringContainsString('2 record(s) successfully loaded', $content);
+        Assert::assertStringContainsString('[OK] Loader "user" successfully executed', $content);
 
         $em = $this->doctrine->getManagerForClass(User::class);
         $users = $em->getRepository(User::class)->findAll();
@@ -98,9 +98,9 @@ final class LoaderContext implements Context
     {
         $content = trim(preg_replace('/[ \/]{2,}/', '', $this->output->fetch()));
         Assert::assertEquals(0, $this->statusCode);
-        Assert::assertContains('Loading data from loader "user"', $content);
-        Assert::assertContains('No data loaded', $content);
-        Assert::assertContains('[OK] Loader "user" successfully executed', $content);
+        Assert::assertStringContainsString('Loading data from loader "user"', $content);
+        Assert::assertStringContainsString('No data loaded', $content);
+        Assert::assertStringContainsString('[OK] Loader "user" successfully executed', $content);
 
         $em = $this->doctrine->getManagerForClass(User::class);
         Assert::assertCount(0, $em->getRepository(User::class)->findAll());
@@ -111,7 +111,7 @@ final class LoaderContext implements Context
      */
     public function iExecuteFooLoaderByItsClassName(): void
     {
-        $this->statusCode = $this->command->run(new StringInput('CoopTilleuls\\\MigrationBundle\\\Tests\\\LegacyBundle\\\Loader\\\FooLoader'), $this->output);
+        $this->statusCode = $this->command->run(new StringInput('CoopTilleuls\\\MigrationBundle\\\E2e\\\LegacyBundle\\\Loader\\\FooLoader'), $this->output);
     }
 
     /**
@@ -129,8 +129,8 @@ final class LoaderContext implements Context
     {
         $content = trim(preg_replace('/[ \/]{2,}/', '', $this->output->fetch()));
         Assert::assertEquals(0, $this->statusCode);
-        Assert::assertContains('Loading data from loader', $content);
-        Assert::assertContains('3 record(s) successfully loaded', $content);
-        Assert::assertContains('successfully executed', $content);
+        Assert::assertStringContainsString('Loading data from loader', $content);
+        Assert::assertStringContainsString('3 record(s) successfully loaded', $content);
+        Assert::assertStringContainsString('successfully executed', $content);
     }
 }
