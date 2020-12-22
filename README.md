@@ -1,3 +1,5 @@
+# /!\ This bundle is not maintained anymore /!\
+
 # CoopTilleulsMigrationBundle
 
 [![Actions Status](https://github.com/coopTilleuls/CoopTilleulsMigrationBundle/workflows/CI/badge.svg)](https://github.com/coopTilleuls/CoopTilleulsMigrationBundle/actions)
